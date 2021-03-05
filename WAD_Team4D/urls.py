@@ -23,5 +23,6 @@ from upskill_photography import views
 urlpatterns = [
     path('', include('upskill_photography.urls')),
     path('admin/', admin.site.urls),
+    #path('accounts/', include('registration.backends.simple.urls')), -- TODO read up what this is for!!! (I suppose it's for user authentication)~OB
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
