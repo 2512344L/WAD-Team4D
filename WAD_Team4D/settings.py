@@ -41,7 +41,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'upskill_photography',
-#    'registration',    ----- THIS WILL EVENTUALLY NEED TO BE ADDED
+    'registration',
 ]
 
 MIDDLEWARE = [
