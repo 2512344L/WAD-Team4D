@@ -1,22 +1,23 @@
 from django.contrib.auth.models import User
 from django.db import models
+import uuid
 
 
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     
-    picture = models.ImageField(upload_to='profile_images', blank=True)
+    profile_picture = models.ImageField(upload_to='profile_images', blank=True)
     
     def __str__(self):
         return self.user.username
         
 
 class Picture(models.Model):
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    user = models.ForeignKey(UserProfile)
+    picture_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    uploading_user = models.ForeignKey('UserProfile', on_delete=models.CASCADE)
     title = models.CharField(max_length=200)
-    image = models.ImageField(upload_to='user_uploads/%d' % user.username)
-    thumbnail = models.ImageField(upload_to='thumbnails/%d' % user.username)
+    image = models.ImageField(upload_to="user_uploads/")
+    thumbnail = models.ImageField(upload_to="thumbnails/")
     category = models.CharField(max_length=100)
     latitude = models.DecimalField(max_digits=8, decimal_places=5)
     longitude = models.DecimalField(max_digits=8, decimal_places=5)
@@ -25,12 +26,12 @@ class Picture(models.Model):
     views = models.PositiveIntegerField(default=0)
     
     def __str__(self):
-        return str(user.username) + " - " + str(self.title)
+        return str(self.user.username) + " - " + str(self.title)
         
         
 class Comment(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    picture = models.ForeignKey(Picture)
-    user = models.ForeignKey(UserProfile)
+    picture = models.ForeignKey('Picture', on_delete=models.CASCADE)
+    user = models.ForeignKey('UserProfile', on_delete=models.CASCADE)
     timestamp = models.DateTimeField(auto_now_add=True)
     text = models.TextField()
