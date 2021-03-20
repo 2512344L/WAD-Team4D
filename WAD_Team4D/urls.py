@@ -21,8 +21,7 @@ from django.urls import include
 from upskill_photography import views
 
 urlpatterns = [
-    path('', views.index, name='index'),
-    path('upskill_photography/', include('upskill_photography.urls')),
+    path('', include('upskill_photography.urls')),
     path('admin/', admin.site.urls),
     path('accounts/', include('registration.backends.simple.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
