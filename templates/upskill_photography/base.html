@@ -67,13 +67,14 @@
 					{% block body_block %}{% endblock %}
 					
 					<!-- Footer -->
-					<footer>
+					<footer class="bg-dark">
 						<hr/>
-						<p class="float-right"><a href="#">Back To Top</a></p>
+						<p class="float-right"><a class="text-light px-4" href="#">Back To Top</a></p>
 						<p>
-							<a href="{% url 'upskill_photography:faq' %}">FAQ</a><br>
-							<a href="{% url 'upskill_photography:contact' %}">Contact Us</a><br>
-							<a href="{% url 'upskill_photography:about' %}">About</a>
+							<a class="text-light px-4" href="{% url 'upskill_photography:faq' %}">FAQ</a><br>
+							<a class="text-light px-4" href="{% url 'upskill_photography:contact' %}">Contact Us</a><br>
+							<a class="text-light px-4" href="{% url 'upskill_photography:about' %}">About</a>
+							<hr/>
 						</p>
 					</footer>
 				</main>
