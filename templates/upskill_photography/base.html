@@ -20,15 +20,17 @@
 	
 	<body>
 		<header>
-			<!--navbar-static-top-->
-			<!--fixed-top-->
 			<nav class="navbar navbar-expand-md navbar-dark static-top bg-dark p-0">
 				<a class="navbar-brand p-2" href="{% url 'upskill_photography:index' %}">Upskill Photography</a>
 				<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
 					<span class="navbar-toggler-icon"></span>
 				</button>
 				
-				<div class="collapse navbar-collapse" id="navbarCollapse">
+				<div class="collapse navbar-collapse flex-column" id="navbarCollapse">
+					<form class="form-inline mr-auto">
+						<input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+						<button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+					</form>
 					<ul class="navbar-nav mr-auto">
 						<li class="nav-item"><a class="nav-link" href="{% url 'upskill_photography:index' %}">Home</a></li>
 						<li class="nav-item"><a class="nav-link" href="{% url 'upskill_photography:discovery' %}">Discovery</a></li>
@@ -52,11 +54,17 @@
 						{% endif %}
 					</ul>
 				</div>
-				
-				<form class="form-inline my-2 my-lg-0">
-					<input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
-					<button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
-				</form>
+				<div class="w-20 mx-auto px-4">
+					<ul class="list-group list-group-flush bg-transparent">
+						{% if user.is_authenticated %}
+						<a class="list-group-item list-group-item-action bg-transparent text-light" href="{% url 'upskill_photography:index' %}">{{ user.username }}</a>
+						<a class="list-group-item list-group-item-action bg-transparent text-light" href="{% url 'auth_logout' %}?next=/">Logout</a>
+						{% else %}
+						<a class="list-group-item list-group-item-action bg-transparent text-light" href="{% url 'registration_register' %}">Register</a>
+						<a class="list-group-item list-group-item-action bg-transparent text-light" href="{% url 'auth_login' %}">Login</a>
+						{% endif %}
+					</ul>
+				</div>
 			</nav>
 		</header>
 		
@@ -65,19 +73,20 @@
 				<main role="main" class="w-50 mx-auto">
 					<!-- Main Page Content - Done in Separate html files -->
 					{% block body_block %}{% endblock %}
-					
-					<!-- Footer -->
-					<footer class="bg-dark">
-						<hr/>
+				</main>
+			</div>
+			<div class="row">
+				<!-- Footer -->
+				<footer class="w-100 mx-auto bg-dark">
+					<div class="w-50 mx-auto">
 						<p class="float-right"><a class="text-light px-4" href="#">Back To Top</a></p>
 						<p>
 							<a class="text-light px-4" href="{% url 'upskill_photography:faq' %}">FAQ</a><br>
 							<a class="text-light px-4" href="{% url 'upskill_photography:contact' %}">Contact Us</a><br>
 							<a class="text-light px-4" href="{% url 'upskill_photography:about' %}">About</a>
-							<hr/>
 						</p>
-					</footer>
-				</main>
+					</div>
+				</footer>
 			</div>
 		</div>
 	
