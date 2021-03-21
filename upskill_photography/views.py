@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from django.contrib.auth.decorators import login_required
 
 def index(request):
     context_dict = {}
@@ -43,3 +44,13 @@ def astronomy(request):
 def search_result(request):
     context_dict = {}
     return render(request, 'upskill_photography/search.html', context=context_dict)
+
+@login_required
+def account(request):
+    context_dict = {}
+    return render(request, 'upskill_photography/account.html', context=context_dict)
+
+@login_required
+def uploads(request):
+    context_dict = {}
+    return render(request, 'upskill_photography/uploads.html', context=context_dict)

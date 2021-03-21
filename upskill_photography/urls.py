@@ -15,4 +15,6 @@ urlpatterns = [
     path('categories/architecture/', views.architecture, name='architecture'),
     path('categories/astronomy/', views.astronomy, name='astronomy'),
     path('search/', views.search_result, name='search_result'),
+    path('account/', views.account, name='account'),
+    path('account/uploads', views.uploads, name='uploads'),
 ]
