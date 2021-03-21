@@ -1,5 +1,6 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
+from urllib.parse import urlencode, urlparse, parse_qs
 
 def index(request):
     context_dict = {}
@@ -42,8 +43,20 @@ def astronomy(request):
     return render(request, 'upskill_photography/category_astronomy.html', context=context_dict)
 
 def search_result(request):
-    context_dict = {}
-    return render(request, 'upskill_photography/search.html', context=context_dict)
+    if request.method == "POST":
+        query_text = request.POST.get('search_field', None)
+        encoded_query_text = urlencode({'query':query_text})
+        return redirect(f"/search/?{encoded_query_text}")
+    else:
+        query_text = (parse_qs(urlparse(request.build_absolute_uri()).query))['query'][0]
+        keywords = query_text.split(' ')
+        results = []
+        context_dict = {}
+        if len(results) != 0:
+            context_dict['query'] = f"Showing results for '{query_text}'"
+        else:
+            context_dict['query'] = f"Could not find any results for '{query_text}'"
+        return render(request, 'upskill_photography/search.html', context=context_dict)
 
 @login_required
 def account(request):

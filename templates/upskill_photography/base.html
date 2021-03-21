@@ -27,8 +27,12 @@
 				</button>
 				
 				<div class="collapse navbar-collapse flex-column" id="navbarCollapse">
-					<form class="form-inline mr-auto">
-						<input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+					<!--<form method="GET" action="" id="searchform">
+						<input class="searchfield" id="searchbox" name="q" type="text" value="{{ request.GET.q }}" placeholder="Search..."/>
+					</form>-->
+					<form class="form-inline mr-auto" action="{% url 'upskill_photography:search_result' %}" method="post">
+						{% csrf_token %}
+						<input class="form-control mr-sm-2" type="search" name="search_field" placeholder="Search" aria-label="Search">
 						<button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
 					</form>
 					<ul class="navbar-nav mr-auto">
@@ -39,6 +43,7 @@
 								Categories
 							</a>
 							<div class="dropdown-menu" aria-labelledby="navbarDropdown">
+								<a class="dropdown-item" href="{% url 'upskill_photography:categories' %}">All Categories</a>
 								<a class="dropdown-item" href="{% url 'upskill_photography:nature' %}">Nature</a>
 								<a class="dropdown-item" href="{% url 'upskill_photography:people' %}">People</a>
 								<a class="dropdown-item" href="{% url 'upskill_photography:architecture' %}">Architecture</a>
