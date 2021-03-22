@@ -25,7 +25,7 @@ class Picture(models.Model):
     views = models.PositiveIntegerField(default=0)
     
     def __str__(self):
-        return str(self.user.username) + " - " + str(self.title)
+        return str(self.uploading_user.user.username) + " - " + str(self.title)
         
         
 class Comment(models.Model):

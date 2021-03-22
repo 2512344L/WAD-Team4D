@@ -70,6 +70,12 @@ def search_result(request):
             context_dict['results'] = None
         return render(request, 'upskill_photography/search.html', context=context_dict)
 
+def userprofile(request, userprofile_username):
+    return render(request, 'upskill_photography/user_profile.html', context=context_dict)
+
+def picture_view(request, userprofile_username, picture_id):
+    return render(request, 'upskill_photography/picture_view.html', context=context_dict)
+
 @login_required
 def account(request):
     return render(request, 'upskill_photography/account.html', context=context_dict)

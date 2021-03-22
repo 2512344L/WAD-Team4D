@@ -10,9 +10,11 @@ urlpatterns = [
     path('contact/', views.contact, name='contact'),
     path('faq/', views.faq, name='faq'),
     path('discovery/', views.discovery, name='discovery'),
-    path('categories/', views.categories, name='categories'),
-    path('categories/<slug:category_name_slug>/', views.show_category, name='show_category'),
     path('search/', views.search_result, name='search_result'),
     path('account/', views.account, name='account'),
     path('account/uploads', views.uploads, name='uploads'),
+    path('categories/', views.categories, name='categories'),
+    path('categories/<slug:category_name_slug>/', views.show_category, name='show_category'),
+    path('<str:userprofile_username>/', views.userprofile, name='userprofile'),
+    path('<str:userprofile_username>/<uuid:picture_id>/', views.picture_view, name='picture_view'),
 ]
