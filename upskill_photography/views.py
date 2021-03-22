@@ -1,15 +1,26 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from urllib.parse import urlencode, urlparse, parse_qs
+<<<<<<< HEAD
+from .models import Picture
+from django.core.files.storage import FileSystemStorage
+=======
 from upskill_photography.models import Picture, Category
+>>>>>>> bcee085ffd6d8fca7332cabe1febf9f4be6cd0d5
 from django.views.generic import ListView
 
 context_dict = {}
 context_dict['categories'] = Category.objects.all
 
 def index(request):
+<<<<<<< HEAD
+    context_dict = {'picture': Picture.objects.all}
+    context_dict = {}
+    # TODO: Retrieve the 10 most liked pictures and add them to the context dict
+=======
     # Retrieve the 10 most liked pictures and add them to the context dict
     context_dict['pictures'] = Picture.objects.order_by('-likes')[:10]
+>>>>>>> bcee085ffd6d8fca7332cabe1febf9f4be6cd0d5
     return render(request, 'upskill_photography/index.html', context=context_dict)
 
 def about(request):
@@ -83,3 +94,15 @@ def account(request):
 @login_required
 def uploads(request):
     return render(request, 'upskill_photography/uploads.html', context=context_dict)
+
+@login_required
+def upload(request):
+    context = {}
+    if request.method == 'POST':
+        uploaded_file = request.files['document']
+        print(uploaded_file.name)
+        print(uploaded_file.size)
+        fs = FileSystemStorage()
+        name = fs.save(uploaded_file.name, uploaded_file)
+        context['url'] = fs.url(name)
+    return render(request, 'upskill_photography/upload.html', context)

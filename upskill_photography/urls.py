@@ -4,7 +4,7 @@ from upskill_photography import views
 app_name = 'upskill_photography'
 
 urlpatterns = [
-    path('upload', views.upload, name= 'upload'),
+    path('upload', views.upload, name='upload'),
     path('', views.index, name='index'),
     path('about/', views.about, name='about'),
     path('contact/', views.contact, name='contact'),
