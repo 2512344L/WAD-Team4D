@@ -4,6 +4,7 @@ from urllib.parse import urlencode, urlparse, parse_qs
 
 def index(request):
     context_dict = {}
+    # TODO: Retrieve the 10 most liked pictures and add them to the context dict
     return render(request, 'upskill_photography/index.html', context=context_dict)
 
 def about(request):
