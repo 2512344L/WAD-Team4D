@@ -40,18 +40,34 @@ def upload(request):
 
 def search_result(request):
     if request.method == "POST":
-        uploaded_file= request.FILES['document']
         query_text = request.POST.get('search_field', None)
         encoded_query_text = urlencode({'query':query_text})
         return redirect(f"/search/?{encoded_query_text}")
     else:
         query_text = (parse_qs(urlparse(request.build_absolute_uri()).query))['query'][0]
-        keywords = query_text.split(' ')
+        keywords = query_text.lower().split(' ')
+        
+        # Remove any unnecessary keywords from the keyword list
+        obsolete_keywords = ['a', 'an', 'and', 'the', '&']
+        for obsolete_keyword in obsolete_keywords:
+            while obsolete_keyword in keywords:
+                keywords.remove(obsolete_keyword)
+        
         results = []
+        
+        # First search for similarities with the whole query text
+        results = results + list(Picture.objects.filter(title__icontains=query_text))
+        
+        # Then search for similarities with each keyword
+        for keyword in keywords:
+            results = results + list(Picture.objects.filter(title__icontains=keyword))     
+
         if len(results) != 0:
             context_dict['query'] = f"Showing results for '{query_text}'"
+            context_dict['results'] = list(dict.fromkeys(results)) # To make the results unique
         else:
             context_dict['query'] = f"Could not find any results for '{query_text}'"
+            context_dict['results'] = None
         return render(request, 'upskill_photography/search.html', context=context_dict)
 
 @login_required
