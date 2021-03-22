@@ -1,5 +1,6 @@
 {% extends 'upskill_photography/base.html' %}
 {% load staticfiles %}
+{% load upskill_photography_template_tags %}
 
 {% block title_block %}
 	Search Result
@@ -10,10 +11,7 @@
 	{% if results %}
 	<div class="row imagetiles">
 		{% for picture in results %}
-		<div class="col-xl-2 col-lg-3 col-md-4 col-sm-6 col-xs-12" >
-			<img src="{{ picture.thumbnail.url }}" class="img-thumbnail" alt="{{ picture.title }}">
-			<p>{{ picture.title }}</p>
-		</div>
+			{% get_picture_thumbnail picture %}
 		{% endfor %}
 	</div>
 	{% endif %}	
