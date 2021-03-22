@@ -27,9 +27,9 @@ def discovery(request):
 def categories(request):
     return render(request, 'upskill_photography/categories.html', context=context_dict)
 
-def show_category(request, category_name):
+def show_category(request, category_name_slug):
     try:
-        category = Category.objects.get(name=category_name)
+        category = Category.objects.get(slug=category_name_slug)
         context_dict['category'] = category
     except Category.DoesNotExist:
         context_dict['category'] = None
