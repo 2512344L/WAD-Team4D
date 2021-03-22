@@ -4,7 +4,12 @@ from urllib.parse import urlencode, urlparse, parse_qs
 from .models import Picture
 from django.views.generic import ListView
 def index(request):
+<<<<<<< HEAD
     context_dict = {'picture': Picture.objects.all}
+=======
+    context_dict = {}
+    # TODO: Retrieve the 10 most liked pictures and add them to the context dict
+>>>>>>> 829c4a8b59e5f649bbbe51ef017ccfd5bbc0f9ca
     return render(request, 'upskill_photography/index.html', context=context_dict)
 
 def about(request):
