@@ -1,9 +1,10 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from urllib.parse import urlencode, urlparse, parse_qs
-
+from .models import Picture
+from django.views.generic import ListView
 def index(request):
-    context_dict = {}
+    context_dict = {'picture': Picture.objects.all}
     return render(request, 'upskill_photography/index.html', context=context_dict)
 
 def about(request):
@@ -41,9 +42,12 @@ def architecture(request):
 def astronomy(request):
     context_dict = {}
     return render(request, 'upskill_photography/category_astronomy.html', context=context_dict)
-
+def upload(request):
+    context_dict={}
+    return render(request, 'upskill_photography/upload.html', context=context_dict)
 def search_result(request):
     if request.method == "POST":
+        uploaded_file= request.FILES['document']
         query_text = request.POST.get('search_field', None)
         encoded_query_text = urlencode({'query':query_text})
         return redirect(f"/search/?{encoded_query_text}")
