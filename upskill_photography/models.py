@@ -18,7 +18,7 @@ class Picture(models.Model):
     title = models.CharField(max_length=200)
     image = models.ImageField(upload_to="user_uploads/")
     thumbnail = models.ImageField(upload_to="thumbnails/")
-    category = models.CharField(max_length=100)
+    category = models.ForeignKey('Category', on_delete=models.CASCADE)
     latitude = models.DecimalField(max_digits=8, decimal_places=5)
     longitude = models.DecimalField(max_digits=8, decimal_places=5)
     timestamp = models.DateTimeField(auto_now_add=True)
@@ -35,3 +35,13 @@ class Comment(models.Model):
     user = models.ForeignKey('UserProfile', on_delete=models.CASCADE)
     timestamp = models.DateTimeField(auto_now_add=True)
     text = models.TextField()
+    
+    def __str__(self):
+        return str(self.id) + " - " + str(self.text)
+
+
+class Category(models.Model):
+    name = models.CharField(max_length=100)
+    
+    def __str__(self):
+        return str(self.name)
