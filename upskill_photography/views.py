@@ -13,14 +13,8 @@ context_dict = {}
 context_dict['categories'] = Category.objects.all
 
 def index(request):
-<<<<<<< HEAD
-    context_dict = {'picture': Picture.objects.all}
-    context_dict = {}
-    # TODO: Retrieve the 10 most liked pictures and add them to the context dict
-=======
     # Retrieve the 10 most liked pictures and add them to the context dict
     context_dict['pictures'] = Picture.objects.order_by('-likes')[:10]
->>>>>>> bcee085ffd6d8fca7332cabe1febf9f4be6cd0d5
     return render(request, 'upskill_photography/index.html', context=context_dict)
 
 def about(request):
@@ -45,9 +39,6 @@ def show_category(request, category_name_slug):
     except Category.DoesNotExist:
         context_dict['category'] = None
     return render(request, 'upskill_photography/category.html', context=context_dict)
-
-def upload(request):
-    return render(request, 'upskill_photography/upload.html', context=context_dict)
 
 def search_result(request):
     if request.method == "POST":
