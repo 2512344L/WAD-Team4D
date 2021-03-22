@@ -44,10 +44,11 @@
 							</a>
 							<div class="dropdown-menu" aria-labelledby="navbarDropdown">
 								<a class="dropdown-item" href="{% url 'upskill_photography:categories' %}">All Categories</a>
-								<a class="dropdown-item" href="{% url 'upskill_photography:nature' %}">Nature</a>
-								<a class="dropdown-item" href="{% url 'upskill_photography:people' %}">People</a>
-								<a class="dropdown-item" href="{% url 'upskill_photography:architecture' %}">Architecture</a>
-								<a class="dropdown-item" href="{% url 'upskill_photography:astronomy' %}">Astronomy</a>
+								{% if categories %}
+								{% for category in categories %}
+								<a class="dropdown-item" href="{% url 'upskill_photography:show_category' category.name %}">{{ category.name }}</a>
+								{% endfor %}
+								{% endif %}
 							</div>
 						</li>
 					</ul>

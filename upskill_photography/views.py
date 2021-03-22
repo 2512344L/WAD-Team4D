@@ -1,15 +1,16 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from urllib.parse import urlencode, urlparse, parse_qs
-from .models import Picture
+from upskill_photography.models import Picture, Category
 from django.views.generic import ListView
+
+context_dict = {}
+context_dict['categories'] = Category.objects.all
+
 def index(request):
-<<<<<<< HEAD
-    context_dict = {'picture': Picture.objects.all}
-=======
     context_dict = {}
-    # TODO: Retrieve the 10 most liked pictures and add them to the context dict
->>>>>>> 829c4a8b59e5f649bbbe51ef017ccfd5bbc0f9ca
+    # Retrieve the 10 most liked pictures and add them to the context dict
+    context_dict['pictures'] = Picture.objects.order_by('-likes')[:10]
     return render(request, 'upskill_photography/index.html', context=context_dict)
 
 def about(request):
