@@ -2,14 +2,12 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from urllib.parse import urlencode, urlparse, parse_qs
 from .models import Picture
+from django.core.files.storage import FileSystemStorage
 from django.views.generic import ListView
 def index(request):
-<<<<<<< HEAD
     context_dict = {'picture': Picture.objects.all}
-=======
     context_dict = {}
     # TODO: Retrieve the 10 most liked pictures and add them to the context dict
->>>>>>> 829c4a8b59e5f649bbbe51ef017ccfd5bbc0f9ca
     return render(request, 'upskill_photography/index.html', context=context_dict)
 
 def about(request):
@@ -76,3 +74,15 @@ def account(request):
 def uploads(request):
     context_dict = {}
     return render(request, 'upskill_photography/uploads.html', context=context_dict)
+
+@login_required
+def upload(request):
+    context = {}
+    if request.method == 'POST':
+        uploaded_file = request.files['document']
+        print(uploaded_file.name)
+        print(uploaded_file.size)
+        fs = FileSystemStorage()
+        name = fs.save(uploaded_file.name, uploaded_file)
+        context['url'] = fs.url(name)
+    return render(request, 'upskill_photography/upload.html', context)
