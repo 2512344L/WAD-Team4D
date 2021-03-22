@@ -1,12 +1,8 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from urllib.parse import urlencode, urlparse, parse_qs
-<<<<<<< HEAD
-from .models import Picture
 from django.core.files.storage import FileSystemStorage
-=======
 from upskill_photography.models import Picture, Category
->>>>>>> bcee085ffd6d8fca7332cabe1febf9f4be6cd0d5
 from django.views.generic import ListView
 
 context_dict = {}
