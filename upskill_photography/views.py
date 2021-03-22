@@ -88,12 +88,11 @@ def uploads(request):
 
 @login_required
 def upload(request):
-    context = {}
     if request.method == 'POST':
         uploaded_file = request.files['document']
         print(uploaded_file.name)
         print(uploaded_file.size)
         fs = FileSystemStorage()
         name = fs.save(uploaded_file.name, uploaded_file)
-        context['url'] = fs.url(name)
-    return render(request, 'upskill_photography/upload.html', context)
+        context_dict['url'] = fs.url(name)
+    return render(request, 'upskill_photography/upload.html', context=context_dict)
