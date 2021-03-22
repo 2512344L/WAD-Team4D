@@ -35,18 +35,6 @@ def show_category(request, category_name_slug):
         context_dict['category'] = None
     return render(request, 'upskill_photography/category.html', context=context_dict)
 
-def nature(request):
-    return render(request, 'upskill_photography/category_nature.html', context=context_dict)
-
-def people(request):
-    return render(request, 'upskill_photography/category_people.html', context=context_dict)
-
-def architecture(request):
-    return render(request, 'upskill_photography/category_architecture.html', context=context_dict)
-
-def astronomy(request):
-    return render(request, 'upskill_photography/category_astronomy.html', context=context_dict)
-
 def upload(request):
     return render(request, 'upskill_photography/upload.html', context=context_dict)
 

@@ -46,7 +46,7 @@
 								<a class="dropdown-item" href="{% url 'upskill_photography:categories' %}">All Categories</a>
 								{% if categories %}
 								{% for category in categories %}
-								<a class="dropdown-item" href="{% url 'upskill_photography:show_category' category.name %}">{{ category.name }}</a>
+								<a class="dropdown-item" href="{% url 'upskill_photography:show_category' category.slug %}">{{ category.name }}</a>
 								{% endfor %}
 								{% endif %}
 							</div>
