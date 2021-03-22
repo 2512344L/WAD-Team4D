@@ -1,78 +1,92 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from urllib.parse import urlencode, urlparse, parse_qs
+<<<<<<< HEAD
 from .models import Picture
 from django.core.files.storage import FileSystemStorage
+=======
+from upskill_photography.models import Picture, Category
+>>>>>>> bcee085ffd6d8fca7332cabe1febf9f4be6cd0d5
 from django.views.generic import ListView
+
+context_dict = {}
+context_dict['categories'] = Category.objects.all
+
 def index(request):
+<<<<<<< HEAD
     context_dict = {'picture': Picture.objects.all}
     context_dict = {}
     # TODO: Retrieve the 10 most liked pictures and add them to the context dict
+=======
+    # Retrieve the 10 most liked pictures and add them to the context dict
+    context_dict['pictures'] = Picture.objects.order_by('-likes')[:10]
+>>>>>>> bcee085ffd6d8fca7332cabe1febf9f4be6cd0d5
     return render(request, 'upskill_photography/index.html', context=context_dict)
 
 def about(request):
-    context_dict = {}
     return render(request, 'upskill_photography/about.html', context=context_dict)
 
 def contact(request):
-    context_dict = {}
     return render(request, 'upskill_photography/contact.html', context=context_dict)
 
 def faq(request):
-    context_dict = {}
     return render(request, 'upskill_photography/faq.html', context=context_dict)
 
 def discovery(request):
-    context_dict = {}
     return render(request, 'upskill_photography/discovery.html', context=context_dict)
 
 def categories(request):
-    context_dict = {}
     return render(request, 'upskill_photography/categories.html', context=context_dict)
 
-def nature(request):
-    context_dict = {}
-    return render(request, 'upskill_photography/category_nature.html', context=context_dict)
+def show_category(request, category_name_slug):
+    try:
+        category = Category.objects.get(slug=category_name_slug)
+        context_dict['category'] = category
+    except Category.DoesNotExist:
+        context_dict['category'] = None
+    return render(request, 'upskill_photography/category.html', context=context_dict)
 
-def people(request):
-    context_dict = {}
-    return render(request, 'upskill_photography/category_people.html', context=context_dict)
-
-def architecture(request):
-    context_dict = {}
-    return render(request, 'upskill_photography/category_architecture.html', context=context_dict)
-
-def astronomy(request):
-    context_dict = {}
-    return render(request, 'upskill_photography/category_astronomy.html', context=context_dict)
 def upload(request):
-    context_dict={}
     return render(request, 'upskill_photography/upload.html', context=context_dict)
+
 def search_result(request):
     if request.method == "POST":
-        uploaded_file= request.FILES['document']
         query_text = request.POST.get('search_field', None)
         encoded_query_text = urlencode({'query':query_text})
         return redirect(f"/search/?{encoded_query_text}")
     else:
         query_text = (parse_qs(urlparse(request.build_absolute_uri()).query))['query'][0]
-        keywords = query_text.split(' ')
+        keywords = query_text.lower().split(' ')
+        
+        # Remove any unnecessary keywords from the keyword list
+        obsolete_keywords = ['a', 'an', 'and', 'the', '&']
+        for obsolete_keyword in obsolete_keywords:
+            while obsolete_keyword in keywords:
+                keywords.remove(obsolete_keyword)
+        
         results = []
-        context_dict = {}
+        
+        # First search for similarities with the whole query text
+        results = results + list(Picture.objects.filter(title__icontains=query_text))
+        
+        # Then search for similarities with each keyword
+        for keyword in keywords:
+            results = results + list(Picture.objects.filter(title__icontains=keyword))     
+
         if len(results) != 0:
             context_dict['query'] = f"Showing results for '{query_text}'"
+            context_dict['results'] = list(dict.fromkeys(results)) # To make the results unique
         else:
             context_dict['query'] = f"Could not find any results for '{query_text}'"
+            context_dict['results'] = None
         return render(request, 'upskill_photography/search.html', context=context_dict)
 
 @login_required
 def account(request):
-    context_dict = {}
     return render(request, 'upskill_photography/account.html', context=context_dict)
 
 @login_required
 def uploads(request):
-    context_dict = {}
     return render(request, 'upskill_photography/uploads.html', context=context_dict)
 
 @login_required

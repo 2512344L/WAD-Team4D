@@ -1,0 +1,18 @@
+{% extends 'upskill_photography/base.html' %}
+{% load staticfiles %}
+
+{% block title_block %}
+	{% if category %}
+	{{ category.name }} Pictures
+	{% else %}
+	Category Does not Exist
+	{% endif %}
+{% endblock %}
+
+{% block body_block %}
+	{% if category %}
+	{{ category.name }} Category
+	{% else %}
+	This category does not exist
+	{% endif %}
+{% endblock %}
