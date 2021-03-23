@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 {% load staticfiles %}
-<!-- TODO: Template tags (setup & load here) -->
+{% load upskill_photography_template_tags %}
 
 <html lang="en">
 	<head>
@@ -69,7 +69,7 @@
 		
 		<div class="container=fluid">
 			<div class="row">
-				<main role="main" class="w-50 mx-auto">
+				<main role="main" class="w-75 mx-auto">
 					<!-- Main Page Content - Done in Separate html files -->
 					{% block body_block %}{% endblock %}
 				</main>
@@ -77,7 +77,7 @@
 			<div class="row">
 				<!-- Footer -->
 				<footer class="w-100 mx-auto bg-dark">
-					<div class="w-50 mx-auto">
+					<div class="w-75 mx-auto">
 						<p class="float-right"><a class="text-light px-4" href="#">Back To Top</a></p>
 						<p>
 							<a class="text-light px-4" href="{% url 'upskill_photography:faq' %}">FAQ</a><br>

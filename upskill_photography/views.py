@@ -1,18 +1,24 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from urllib.parse import urlencode, urlparse, parse_qs
+
 from .models import Picture
 from django.core.files.storage import FileSystemStorage
 from upskill_photography.models import Picture, Category
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from .forms import uploading
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.core.files.storage import FileSystemStorage
+from upskill_photography.models import Picture, Category
+from django.views.generic import ListView
+
 
 context_dict = {}
 context_dict['categories'] = Category.objects.all
 
 
 def index(request):
+
     context_dict = {'picture': Picture.objects.all}
     context_dict = {}
     # TODO: Retrieve the 10 most liked pictures and add them to the context dict
@@ -51,9 +57,11 @@ def show_category(request, category_name_slug):
     return render(request, 'upskill_photography/category.html', context=context_dict)
 
 
+
 def upload_book(request):
     form = uploading()
     return render(request, 'upskill_photography/upload.html', {'form': form})
+
 
 
 def search_result(request):
@@ -62,6 +70,7 @@ def search_result(request):
         encoded_query_text = urlencode({'query': query_text})
         return redirect(f"/search/?{encoded_query_text}")
     else:
+
         query_text = (parse_qs(urlparse(request.build_absolute_uri()).query))['query'][0]
         keywords = query_text.lower().split(' ')
 
@@ -80,6 +89,29 @@ def search_result(request):
         for keyword in keywords:
             results = results + list(Picture.objects.filter(title__icontains=keyword))
 
+
+        results = []
+        query_text = ""
+        try:
+            query_text = (parse_qs(urlparse(request.build_absolute_uri()).query))['query'][0]
+            keywords = query_text.lower().split(' ')
+            
+            # Remove any unnecessary keywords from the keyword list
+            obsolete_keywords = ['a', 'an', 'and', 'the', '&']
+            for obsolete_keyword in obsolete_keywords:
+                while obsolete_keyword in keywords:
+                    keywords.remove(obsolete_keyword)
+            
+            # First search for similarities with the whole query text
+            results = results + list(Picture.objects.filter(title__icontains=query_text))
+            
+            # Then search for similarities with each keyword
+            for keyword in keywords:
+                results = results + list(Picture.objects.filter(title__icontains=keyword))
+        except KeyError:
+            pass
+        
+
         if len(results) != 0:
             context_dict['query'] = f"Showing results for '{query_text}'"
             context_dict['results'] = list(dict.fromkeys(results))  # To make the results unique
@@ -87,6 +119,14 @@ def search_result(request):
             context_dict['query'] = f"Could not find any results for '{query_text}'"
             context_dict['results'] = None
         return render(request, 'upskill_photography/search.html', context=context_dict)
+
+
+
+def userprofile(request, userprofile_username):
+    return render(request, 'upskill_photography/user_profile.html', context=context_dict)
+
+def picture_view(request, userprofile_username, picture_id):
+    return render(request, 'upskill_photography/picture_view.html', context=context_dict)
 
 
 @login_required
@@ -99,17 +139,7 @@ def uploads(request):
     return render(request, 'upskill_photography/uploads.html', context=context_dict)
 
 
-@login_required
-def upload(request):
-    context = {}
-    if request.method == 'POST':
-        uploaded_file = request.files['document']
-        print(uploaded_file.name)
-        print(uploaded_file.size)
-        fs = FileSystemStorage()
-        name = fs.save(uploaded_file.name, uploaded_file)
-        context['url'] = fs.url(name)
-    return render(request, 'upskill_photography/upload.html', context)
+
 
 
 class postlistview(ListView):
@@ -148,3 +178,6 @@ class postUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
         if self.request.user == Picture.uploading_user:
             return True
         return False
+
+        context_dict['url'] = fs.url(name)
+        return render(request, 'upskill_photography/upload.html', context=context_dict)
