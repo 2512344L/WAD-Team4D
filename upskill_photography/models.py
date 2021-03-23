@@ -1,6 +1,7 @@
 from django.contrib.auth.models import User
 from django.db import models
 import uuid
+from django.urls import reverse
 
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
@@ -26,6 +27,8 @@ class Picture(models.Model):
     
     def __str__(self):
         return str(self.user.username) + " - " + str(self.title)
+    def get_absolute_url(self):
+        return reverse('post-detail', kwargs={'pk': self.pk})
         
         
 class Comment(models.Model):
