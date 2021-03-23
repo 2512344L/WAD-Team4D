@@ -7,7 +7,25 @@
 {% endblock %}
 
 {% block body_block %}	
-	<p><strong>{{ query }}</strong></p><br>
+	<div class="bg-dark row rounded-bottom d-flex">
+		<div class="px-4">
+			<p class="text-light"><strong>{{ query }}</strong></p>
+		</div>
+		<form class="ml-auto px-4 text-light" action="." method="post">
+			{% csrf_token %}
+			Sort By: 
+			<select class="form-select bg-dark text-light" aria-label="Sorting Style" name="sort_style">
+				<option selected value="new">Upload Time</option>
+				<option value="views">Views</option>
+				<option value="likes">Likes</option>
+			</select>
+			<select class="form-select bg-dark text-light" aria-label="Sorting Order" name="sort_order">
+				<option selected value="asc">Ascending</option>
+				<option value="desc">Descending</option>
+			</select>
+			<button class="bg-transparent btn-outline-success" type="submit">Reload</button>
+		</form>
+	</div>
 	{% if results %}
 	<div class="row imagetiles">
 		{% for picture in results %}
