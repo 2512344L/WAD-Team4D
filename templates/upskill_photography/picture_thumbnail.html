@@ -1,4 +1,9 @@
+{% load staticfiles %}
+
 <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6 col-xs-12" >
 	<img src="{{ picture.thumbnail.url }}" class="img-thumbnail" alt="{{ picture.title }}">
-	<p>{{ picture.title }}</p>
+	<div class="font-italic text-nowrap overflow-hidden">{{ picture.title }}</div>
+	<div class="float-right">
+		{{ picture.views }}
+		<img src="{% static 'images/view.ico' %}" width="16" height="16">
 </div>
