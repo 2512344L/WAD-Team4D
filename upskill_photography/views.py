@@ -17,10 +17,6 @@ context_dict['categories'] = Category.objects.all
 
 
 def index(request):
-    context_dict = {'picture': Picture.objects.all}
-    context_dict = {}
-    # TODO: Retrieve the 10 most liked pictures and add them to the context dict
-
     # Retrieve the 10 most liked pictures and add them to the context dict
     context_dict['pictures'] = Picture.objects.order_by('-likes')[:10]
     return render(request, 'upskill_photography/index.html', context=context_dict)
