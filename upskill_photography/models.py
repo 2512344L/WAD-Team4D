@@ -28,10 +28,6 @@ class Picture(models.Model):
     def __str__(self):
 
         return str(self.user.username) + " - " + str(self.title)
-    def get_absolute_url(self):
-        return reverse('post-detail', kwargs={'pk': self.pk})
-
-        return str(self.uploading_user.user.username) + " - " + str(self.title)
 
         
         
