@@ -27,7 +27,7 @@ class Picture(models.Model):
     
     def __str__(self):
 
-        return str(self.user.username) + " - " + str(self.title)
+        return str(self.uploading_user.user.username) + " - " + str(self.title)
 
         
         
