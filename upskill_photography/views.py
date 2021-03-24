@@ -12,13 +12,11 @@ from django.core.files.storage import FileSystemStorage
 from upskill_photography.models import Picture, Category
 from django.views.generic import ListView
 
-
 context_dict = {}
 context_dict['categories'] = Category.objects.all
 
 
 def index(request):
-
     context_dict = {'picture': Picture.objects.all}
     context_dict = {}
     # TODO: Retrieve the 10 most liked pictures and add them to the context dict
@@ -57,11 +55,9 @@ def show_category(request, category_name_slug):
     return render(request, 'upskill_photography/category.html', context=context_dict)
 
 
-
 def upload_book(request):
     form = uploading()
     return render(request, 'upskill_photography/upload.html', {'form': form})
-
 
 
 def search_result(request):
@@ -89,28 +85,26 @@ def search_result(request):
         for keyword in keywords:
             results = results + list(Picture.objects.filter(title__icontains=keyword))
 
-
         results = []
         query_text = ""
         try:
             query_text = (parse_qs(urlparse(request.build_absolute_uri()).query))['query'][0]
             keywords = query_text.lower().split(' ')
-            
+
             # Remove any unnecessary keywords from the keyword list
             obsolete_keywords = ['a', 'an', 'and', 'the', '&']
             for obsolete_keyword in obsolete_keywords:
                 while obsolete_keyword in keywords:
                     keywords.remove(obsolete_keyword)
-            
+
             # First search for similarities with the whole query text
             results = results + list(Picture.objects.filter(title__icontains=query_text))
-            
+
             # Then search for similarities with each keyword
             for keyword in keywords:
                 results = results + list(Picture.objects.filter(title__icontains=keyword))
         except KeyError:
             pass
-        
 
         if len(results) != 0:
             context_dict['query'] = f"Showing results for '{query_text}'"
@@ -121,9 +115,9 @@ def search_result(request):
         return render(request, 'upskill_photography/search.html', context=context_dict)
 
 
-
 def userprofile(request, userprofile_username):
     return render(request, 'upskill_photography/user_profile.html', context=context_dict)
+
 
 def picture_view(request, userprofile_username, picture_id):
     return render(request, 'upskill_photography/picture_view.html', context=context_dict)
@@ -139,9 +133,6 @@ def uploads(request):
     return render(request, 'upskill_photography/uploads.html', context=context_dict)
 
 
-
-
-
 class postlistview(ListView):
     model = Picture
     template_name = 'upskill_photography/index.html'
@@ -152,9 +143,11 @@ class postlistview(ListView):
 class postDetailView(DetailView):
     model = Picture
 
+
 class postDeleteView(DeleteView, LoginRequiredMixin, UserPassesTestMixin):
     model = Picture
     success_url = '/'
+
 
 class postCreateView(LoginRequiredMixin, CreateView):
     model = Picture
@@ -174,10 +167,7 @@ class postUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
         return super().form_valid(form)
 
     def test_func(self):
-        Picture = self.get_object()
+        post = self.get_object()
         if self.request.user == Picture.uploading_user:
             return True
         return False
-
-        context_dict['url'] = fs.url(name)
-        return render(request, 'upskill_photography/upload.html', context=context_dict)
