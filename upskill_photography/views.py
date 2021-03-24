@@ -55,10 +55,6 @@ def show_category(request, category_name_slug):
     return render(request, 'upskill_photography/category.html', context=context_dict)
 
 
-def upload_book(request):
-    form = uploading()
-    return render(request, 'upskill_photography/upload.html', {'form': form})
-
 
 def search_result(request):
     if request.method == "POST":
@@ -131,6 +127,10 @@ def account(request):
 @login_required
 def uploads(request):
     return render(request, 'upskill_photography/uploads.html', context=context_dict)
+
+@login_required
+def upload(request):
+    return render(request, 'upskill_photography/upload.html', context=context_dict)
 
 
 class postlistview(ListView):
