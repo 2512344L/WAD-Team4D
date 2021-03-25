@@ -1,5 +1,6 @@
 {% extends 'upskill_photography/base.html' %}
 {% load staticfiles %}
+{% load upskill_photography_template_tags %}
 
 {% block title_block %}
 	Discover Pictures
@@ -7,4 +8,11 @@
 
 {% block body_block %}
 	Discovery
+	{% if pictures %}
+	<div class="row imagetiles">
+		{% for picture in pictures %}
+			{% get_picture_thumbnail picture %}
+		{% endfor %}
+	</div>
+	{% endif %}	
 {% endblock %}

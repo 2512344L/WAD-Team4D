@@ -35,6 +35,8 @@ def faq(request):
 
 
 def discovery(request):
+    # Pictures can have sort order
+    context_dict['pictures'] = Picture.objects.order_by('-likes')
     return render(request, 'upskill_photography/discovery.html', context=context_dict)
 
 
@@ -43,6 +45,7 @@ def categories(request):
 
 
 def show_category(request, category_name_slug):
+    # Pictures can have sort order
     try:
         category = Category.objects.get(slug=category_name_slug)
         context_dict['category'] = category
@@ -53,58 +56,51 @@ def show_category(request, category_name_slug):
 
 
 def search_result(request):
+    # Pictures can have sort order
     if request.method == "POST":
         query_text = request.POST.get('search_field', None)
         encoded_query_text = urlencode({'query': query_text})
         return redirect(f"/search/?{encoded_query_text}")
     else:
-
-        query_text = (parse_qs(urlparse(request.build_absolute_uri()).query))['query'][0]
-        keywords = query_text.lower().split(' ')
-
-        # Remove any unnecessary keywords from the keyword list
-        obsolete_keywords = ['a', 'an', 'and', 'the', '&']
-        for obsolete_keyword in obsolete_keywords:
-            while obsolete_keyword in keywords:
-                keywords.remove(obsolete_keyword)
-
-        results = []
-
-        # First search for similarities with the whole query text
-        results = results + list(Picture.objects.filter(title__icontains=query_text))
-
-        # Then search for similarities with each keyword
-        for keyword in keywords:
-            results = results + list(Picture.objects.filter(title__icontains=keyword))
-
-        results = []
         query_text = ""
+        sort_style = "new"
+        sort_order = "desc"
         try:
-            query_text = (parse_qs(urlparse(request.build_absolute_uri()).query))['query'][0]
-            keywords = query_text.lower().split(' ')
-
-            # Remove any unnecessary keywords from the keyword list
-            obsolete_keywords = ['a', 'an', 'and', 'the', '&']
-            for obsolete_keyword in obsolete_keywords:
-                while obsolete_keyword in keywords:
-                    keywords.remove(obsolete_keyword)
-
-            # First search for similarities with the whole query text
-            results = results + list(Picture.objects.filter(title__icontains=query_text))
-
-            # Then search for similarities with each keyword
-            for keyword in keywords:
-                results = results + list(Picture.objects.filter(title__icontains=keyword))
+            query_dict = parse_qs(urlparse(request.build_absolute_uri()).query)
+            query_text = query_dict['query'][0]
+            sort_style = query_dict['sort_style']
+            sort_order = query_dict['sort_order']
         except KeyError:
             pass
-
-        if len(results) != 0:
-            context_dict['query'] = f"Showing results for '{query_text}'"
-            context_dict['results'] = list(dict.fromkeys(results))  # To make the results unique
-        else:
-            context_dict['query'] = f"Could not find any results for '{query_text}'"
-            context_dict['results'] = None
+        
+        context_dict['results'] = search_function(query_text)
+        context_dict['query'] = query_text
         return render(request, 'upskill_photography/search.html', context=context_dict)
+
+
+## Private Method ##
+def search_function(query_text):
+    results = []
+    keywords = query_text.lower().split(' ')
+
+    # Remove any unnecessary keywords from the keyword list
+    obsolete_keywords = ['a', 'an', 'and', 'the', '&']
+    for obsolete_keyword in obsolete_keywords:
+        while obsolete_keyword in keywords:
+            keywords.remove(obsolete_keyword)
+
+    # First search for similarities with the whole query text
+    results = results + list(Picture.objects.filter(title__icontains=query_text))
+
+    # Then search for similarities with each keyword
+    for keyword in keywords:
+        results = results + list(Picture.objects.filter(title__icontains=keyword))
+
+    if len(results) != 0:
+        results = list(dict.fromkeys(results))  # To make the results unique
+    else:
+        results = None
+    return results
 
 
 def userprofile(request, userprofile_username):
