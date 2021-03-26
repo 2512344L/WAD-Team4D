@@ -22,8 +22,8 @@
 				<option value="likes" {% if sort_style == 'likes' %}selected{% endif %}>Likes</option>
 			</select>
 			<select class="form-select bg-dark text-light" aria-label="Sorting Order" name="sort_order">
-				<option value="asc" {% if sort_order == 'asc' %}selected{% endif %}>Ascending</option>
 				<option value="desc" {% if sort_order == 'desc' %}selected{% endif %}>Descending</option>
+				<option value="asc" {% if sort_order == 'asc' %}selected{% endif %}>Ascending</option>
 			</select>
 			<button class="bg-transparent btn-outline-success" type="submit">Reload</button>
 		</form>

@@ -2,9 +2,17 @@
 {% load staticfiles %}
 
 {% block title_block %}
-      <!-- FORM HERE -->
+      {% if user %}
+	  {{ user.user.username }}
+	  {% else %}
+	  Invalid Username
+	  {% endif %}
 {% endblock %}
 
 {% block body_block %}
-	Someone's User Profile
+	{% if user %}
+	{{ user.user.username }}'s User Profile
+	{% else %}
+	The user does not exist
+	{% endif %}
 {% endblock %}
