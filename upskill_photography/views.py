@@ -57,7 +57,9 @@ def picture_ordering(pictures, sort_style, sort_order):
 
 def index(request):
     # Retrieve the 10 most liked pictures and add them to the context dict
-    context_dict['pictures'] = Picture.objects.order_by('-likes')[:10]
+    context_dict['first_picture'] = list(Picture.objects.order_by('-likes'))[0]
+    context_dict['pictures'] = list(Picture.objects.order_by('-likes'))[1:10]
+    context_dict['counter'] = list(range(1, len(context_dict['pictures']) + 1))
     return render(request, 'upskill_photography/index.html', context=context_dict)
 
 
