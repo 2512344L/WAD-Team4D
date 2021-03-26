@@ -1,5 +1,6 @@
-from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
+from django.shortcuts import render, redirect
+from django.urls import reverse
 from urllib.parse import urlencode, urlparse, parse_qs
 
 from .models import Picture
@@ -12,8 +13,19 @@ from django.core.files.storage import FileSystemStorage
 from upskill_photography.models import Picture, Category
 from django.views.generic import ListView
 
+# Initialize the Context dict and add the categories to it by default
 context_dict = {}
 context_dict['categories'] = Category.objects.all
+
+# Initialize the Query String dict
+query_dict = {}
+
+# This should be called whenever we want to extract parameters from the request url string
+def get_query_parameters(request):
+    if request.method == "GET":
+        url_params = parse_qs(urlparse(request.build_absolute_uri()).query)
+        for param in url_params:
+            query_dict[param] = url_params[param][0]
 
 
 def index(request):
@@ -58,20 +70,30 @@ def show_category(request, category_name_slug):
 def search_result(request):
     # Pictures can have sort order
     if request.method == "POST":
-        query_text = request.POST.get('search_field', None)
-        encoded_query_text = urlencode({'query': query_text})
-        return redirect(f"/search/?{encoded_query_text}")
+        query_string = {}
+        
+        query_text = request.POST.get('search_query', None)
+        print(query_text)
+        if query_text:
+            query_string['query'] = query_text
+        
+        sort_style = request.POST.get('sort_style', "")
+        sort_order = request.POST.get('sort_order', "")
+        if sort_style != "" and sort_order != "":
+            query_string['sort'] = sort_style + "_" + sort_order
+        
+        print(query_string)
+        if len(query_string) > 0:
+            encoded_query_string = urlencode(query_string)
+            print(encoded_query_string)
+            return redirect(reverse('upskill_photography:search_result') + f"?{encoded_query_string}")
+        else:
+            return redirect(reverse('upskill_photography:search_result'))
     else:
+        get_query_parameters(request)
         query_text = ""
-        sort_style = "new"
-        sort_order = "desc"
-        try:
-            query_dict = parse_qs(urlparse(request.build_absolute_uri()).query)
-            query_text = query_dict['query'][0]
-            sort_style = query_dict['sort_style']
-            sort_order = query_dict['sort_order']
-        except KeyError:
-            pass
+        if 'query' in query_dict:
+            query_text = query_dict['query']
         
         context_dict['results'] = search_function(query_text)
         context_dict['query'] = query_text

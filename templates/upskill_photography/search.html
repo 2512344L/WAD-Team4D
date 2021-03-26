@@ -10,25 +10,27 @@
 	<div class="bg-dark row rounded-bottom d-flex">
 		<div class="px-4">
 			{% if results %}
-			<p class="text-light"><strong>Showing results for {{ query }}</strong></p>
+			<p class="text-light"><strong>Showing results for '{{ query }}'</strong></p>
 			{% else %}
-			<p class="text-light"><strong>Could not find any results for {{ query }}</strong></p>
+			<p class="text-light"><strong>Could not find any results for '{{ query }}'</strong></p>
 			{% endif %}
 		</div>
 		
 		
-		<form class="ml-auto px-4 text-light" action="." method="post">
+		<form class="ml-auto px-4 text-light" action="{% url 'upskill_photography:search_result' %}" method="post">
 			{% csrf_token %}
 			Sort By: 
 			<input type="hidden" name="search_query" value="{{ query }}">
 			<select class="form-select bg-dark text-light" aria-label="Sorting Style" name="sort_style">
-				<option selected value="new">Upload Time</option>
+				<option value="" selected hidden disabled>Sorting Style</option>
+				<option value="new">Upload Time</option>
 				<option value="views">Views</option>
 				<option value="likes">Likes</option>
 			</select>
 			<select class="form-select bg-dark text-light" aria-label="Sorting Order" name="sort_order">
-				<option selected value="desc">Descending</option>
+				<option value="" selected hidden disabled>Sorting Order</option>
 				<option value="asc">Ascending</option>
+				<option value="desc">Descending</option>
 			</select>
 			<button class="bg-transparent btn-outline-success" type="submit">Reload</button>
 		</form>
