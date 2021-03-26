@@ -26,6 +26,33 @@ def get_query_parameters(request):
         url_params = parse_qs(urlparse(request.build_absolute_uri()).query)
         for param in url_params:
             query_dict[param] = url_params[param][0]
+            
+## Private Method ##
+def picture_ordering(pictures, sort_style, sort_order):
+    def upload_time(picture):
+        return picture.timestamp
+        
+    def views(picture):
+        return picture.views
+        
+    def likes(picture):
+        return picture.likes
+
+    pictures = list(pictures)
+
+    reverse = True
+    if sort_order == "asc":
+        reverse = False
+    
+    func = upload_time
+    if sort_style == "views":
+        func = views
+    elif sort_style == "likes":
+        func = likes
+    
+    pictures.sort(reverse=reverse, key=func)
+    return pictures
+
 
 
 def index(request):
@@ -94,8 +121,14 @@ def search_result(request):
         query_text = ""
         if 'query' in query_dict:
             query_text = query_dict['query']
+            
+        results = search_function(query_text)
         
-        context_dict['results'] = search_function(query_text)
+        if results and 'sort' in query_dict:
+            sort_style, sort_order = query_dict['sort'].split('_')
+            results = picture_ordering(results, sort_style, sort_order)        
+        
+        context_dict['results'] = results
         context_dict['query'] = query_text
         return render(request, 'upskill_photography/search.html', context=context_dict)
 
