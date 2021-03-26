@@ -22,15 +22,15 @@
 			Sort By: 
 			<input type="hidden" name="search_query" value="{{ query }}">
 			<select class="form-select bg-dark text-light" aria-label="Sorting Style" name="sort_style">
-				<option value="" selected hidden disabled>Sorting Style</option>
-				<option value="new">Upload Time</option>
-				<option value="views">Views</option>
-				<option value="likes">Likes</option>
+				<option value="" {% if sort_style == 'relevance' %}selected{% endif %} hidden disabled>Relevance</option>
+				<option value="new" {% if sort_style == 'new' %}selected{% endif %}>Upload Time</option>
+				<option value="views" {% if sort_style == 'views' %}selected{% endif %}>Views</option>
+				<option value="likes" {% if sort_style == 'likes' %}selected{% endif %}>Likes</option>
 			</select>
 			<select class="form-select bg-dark text-light" aria-label="Sorting Order" name="sort_order">
-				<option value="" selected hidden disabled>Sorting Order</option>
-				<option value="asc">Ascending</option>
-				<option value="desc">Descending</option>
+				<option value="" {% if sort_order == 'relevance' %}selected{% endif %} hidden disabled></option>
+				<option value="asc" {% if sort_order == 'asc' %}selected{% endif %}>Ascending</option>
+				<option value="desc" {% if sort_order == 'desc' %}selected{% endif %}>Descending</option>
 			</select>
 			<button class="bg-transparent btn-outline-success" type="submit">Reload</button>
 		</form>

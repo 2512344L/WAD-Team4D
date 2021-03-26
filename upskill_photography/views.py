@@ -74,9 +74,31 @@ def faq(request):
 
 
 def discovery(request):
-    # Pictures can have sort order
-    context_dict['pictures'] = Picture.objects.order_by('-likes')
-    return render(request, 'upskill_photography/discovery.html', context=context_dict)
+    if request.method == "POST":
+        query_string = {}
+        
+        sort_style = request.POST.get('sort_style', "")
+        sort_order = request.POST.get('sort_order', "")
+        if sort_style != "" and sort_order != "":
+            query_string['sort'] = sort_style + "_" + sort_order
+        
+        if len(query_string) > 0:
+            encoded_query_string = urlencode(query_string)
+            return redirect(reverse('upskill_photography:discovery') + f"?{encoded_query_string}")
+        else:
+            return redirect(reverse('upskill_photography:discovery'))
+    else:
+        get_query_parameters(request)
+        pictures = Picture.objects.order_by('-timestamp')
+        
+        if pictures and 'sort' in query_dict:
+            sort_style, sort_order = query_dict['sort'].split('_')
+            pictures = picture_ordering(pictures, sort_style, sort_order)   
+            context_dict['sort_style'] = sort_style
+            context_dict['sort_order'] = sort_order
+        
+        context_dict['pictures'] = pictures
+        return render(request, 'upskill_photography/discovery.html', context=context_dict)
 
 
 def categories(request):
@@ -95,12 +117,10 @@ def show_category(request, category_name_slug):
 
 
 def search_result(request):
-    # Pictures can have sort order
     if request.method == "POST":
         query_string = {}
         
         query_text = request.POST.get('search_query', None)
-        print(query_text)
         if query_text:
             query_string['query'] = query_text
         
@@ -109,10 +129,8 @@ def search_result(request):
         if sort_style != "" and sort_order != "":
             query_string['sort'] = sort_style + "_" + sort_order
         
-        print(query_string)
         if len(query_string) > 0:
             encoded_query_string = urlencode(query_string)
-            print(encoded_query_string)
             return redirect(reverse('upskill_photography:search_result') + f"?{encoded_query_string}")
         else:
             return redirect(reverse('upskill_photography:search_result'))
@@ -124,9 +142,13 @@ def search_result(request):
             
         results = search_function(query_text)
         
+        context_dict['sort_style'] = "relevance"
+        context_dict['sort_order'] = "relevance"
         if results and 'sort' in query_dict:
             sort_style, sort_order = query_dict['sort'].split('_')
-            results = picture_ordering(results, sort_style, sort_order)        
+            results = picture_ordering(results, sort_style, sort_order)  
+            context_dict['sort_style'] = sort_style
+            context_dict['sort_order'] = sort_order
         
         context_dict['results'] = results
         context_dict['query'] = query_text
