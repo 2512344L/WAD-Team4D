@@ -4,11 +4,14 @@ from .views import postlistview, postDetailView, postCreateView, postUpdateView,
 app_name = 'upskill_photography'
 
 urlpatterns = [
+    ##      CHECK THIS FOR DUPLICATES     ##
+    ## MANY ALREADY DEFINED AT THE BOTTOM ##
     path('', postlistview.as_view(), name='index'),
     path('picture/<int:pk>/', postlistview.as_view(), name='post-detail'),
     path('picture/<int:pk>/update/', postUpdateView.as_view(), name='post-update'),
     path('picture/<int:pk>/delete/', postDeleteView.as_view(), name='post-delete'),
     path('picture/new/', postCreateView.as_view(), name='post-create'),
+    ## ___________________________________ ##
 
     path('', views.index, name='index'),
 
