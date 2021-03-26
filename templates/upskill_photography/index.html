@@ -8,23 +8,33 @@
 
 {% block body_block %}
 {% if pictures %}
-<div id="carouselExampleIndicators" class="carousel slide w-75 mx-auto m-4" data-ride="carousel">
-	<div class="carousel-indicators">
-		<button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 0"></button>
-		{% for i in counter %}
-		<button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="{{ i }}" aria-label="Slide {{ i }}"></button>
-		{% endfor %}
-	</div>
-	
-	<div class="carousel-inner border border-dark rounded">
-		<div class="carousel-item active">
-			<img src="{{ first_picture.image.url }}" class="w-100" alt="{{ first_picture.title }}">
+<div class="w-75 mx-auto m-4">
+	<div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
+		<ol class="carousel-indicators">
+			<li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>
+			{% for i in counter %}
+			<li data-target="#carouselExampleIndicators" data-slide-to="{{ i }}"></li>
+			{% endfor %}
+		</ol>
+		
+		<div class="carousel-inner border border-dark rounded">
+			<div class="carousel-item active">
+				<img src="{{ first_picture.image.url }}" class="w-100" alt="{{ first_picture.title }}">
+				<div class="carousel-caption d-none d-md-block">
+					<h5 class="text-dark" style="text-shadow: 1px 1px #ffffff"><strong>{{ first_picture.uploading_user.user.username }}</strong></h5>
+					<p class="text-dark" style="text-shadow: 1px 1px #ffffff"><strong>{{ first_picture.title }}</strong></p>
+				</div>
+			</div>
+			{% for picture in pictures %}
+			<div class="carousel-item">
+				<img src="{{ picture.image.url }}" class="w-100" alt="{{ picture.title }}">
+				<div class="carousel-caption d-none d-md-block">
+					<h5 class="text-dark" style="text-shadow: 1px 1px #ffffff"><strong>{{ picture.uploading_user.user.username }}</strong></h5>
+					<p class="text-dark" style="text-shadow: 1px 1px #ffffff"><strong>{{ picture.title }}</strong></p>
+				</div>
+			</div>
+			{% endfor %}
 		</div>
-		{% for picture in pictures %}
-		<div class="carousel-item">
-			<img src="{{ picture.image.url }}" class="w-100" alt="{{ picture.title }}">
-		</div>
-		{% endfor %}
 	</div>
 </div>
 {% endif %}
