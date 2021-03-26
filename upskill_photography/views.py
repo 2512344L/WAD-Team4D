@@ -23,13 +23,12 @@ def get_query_parameters(request):
         url_params = parse_qs(urlparse(request.build_absolute_uri()).query)
         for param in url_params:
             query_dict[param] = url_params[param][0]
-<<<<<<< HEAD
 
 
-=======
+
+
     return query_dict
-            
->>>>>>> fbb88e2bb8f3db7585bd4a9d574a5eeb53305ba7
+
 ## Private Method ##
 def picture_ordering(pictures, sort_style, sort_order):
     def upload_time(picture):
@@ -100,14 +99,13 @@ def discovery(request):
             pictures = picture_ordering(pictures, sort_style, sort_order)
             context_dict['sort_style'] = sort_style
             context_dict['sort_order'] = sort_order
-<<<<<<< HEAD
 
-=======
+
+
         else:
             context_dict['sort_style'] = "new"
             context_dict['sort_order'] = "desc"
-        
->>>>>>> fbb88e2bb8f3db7585bd4a9d574a5eeb53305ba7
+
         context_dict['pictures'] = pictures
         return render(request, 'upskill_photography/discovery.html', context=context_dict)
 
