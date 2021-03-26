@@ -1,5 +1,6 @@
 from django import forms
-from .models import Picture
+from upskill_photography.models import Picture
+
 class uploading(forms.ModelForm):
     class Meta:
         model = Picture
