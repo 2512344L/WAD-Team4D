@@ -16,5 +16,6 @@ urlpatterns = [
     path('categories/<slug:category_name_slug>/', views.show_category, name='show_category'),
     path('user/<str:userprofile_username>/', views.userprofile, name='userprofile'),
     path('user/<str:userprofile_username>/<uuid:picture_id>/', views.picture_view, name='picture_view'),
+    path('like_picture/', views.LikePictureView.as_view(), name='like_picture'),
     path('upload/', views.upload, name='upload'),
 ]

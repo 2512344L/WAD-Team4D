@@ -1,6 +1,10 @@
+from datetime import datetime
 from django.contrib.auth.decorators import login_required
+from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.urls import reverse
+from django.utils.decorators import method_decorator
+from django.views import View
 from upskill_photography.models import Picture, UserProfile, User, Category
 from urllib.parse import urlencode, urlparse, parse_qs
 
@@ -222,6 +226,13 @@ def userprofile(request, userprofile_username):
 
 
 def picture_view(request, userprofile_username, picture_id):
+    try:
+        picture = Picture.objects.get(picture_id=picture_id)
+        picture.views = picture.views + 1
+        picture.save()
+        context_dict['picture'] = picture
+    except Picture.DoesNotExist:
+        context_dict['picture'] = None
     return render(request, 'upskill_photography/picture_view.html', context=context_dict)
 
 
@@ -246,3 +257,17 @@ def upload(request):
     return render(request, 'upskill_photography/upload.html', context=context)
 
 
+class LikePictureView(View):
+    @method_decorator(login_required)
+    def get(self, request):
+        picture_id = request.GET['picture_id']
+        print(picture_id)
+        picture = None
+        try:
+            picture = Picture.objects.get(picture_id=picture_id)
+        except Picture.DoesNotExist:
+            return HttpResponse(-1)
+         
+        picture.likes = picture.likes + 1
+        picture.save()
+        return HttpResponse(picture.likes)

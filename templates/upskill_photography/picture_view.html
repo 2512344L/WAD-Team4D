@@ -6,4 +6,16 @@
 {% endblock %}
 
 {% block body_block %}
+{% if picture %}
+	<strong>{{ picture.views }}</strong> views
+	{% if user.is_authenticated %}
+	<strong id="like_count">{{ picture.likes }}</strong> likes
+	<button id="like_btn"
+			data-pictureid="{{ picture.picture_id }}"
+			class="btn btn-primary btn-sm"
+			type="button">Like</button>
+	{% endif %}
+{% else %}
+This picture does not exist
+{% endif %}
 {% endblock %}
