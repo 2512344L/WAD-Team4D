@@ -23,10 +23,6 @@ def get_query_parameters(request):
         url_params = parse_qs(urlparse(request.build_absolute_uri()).query)
         for param in url_params:
             query_dict[param] = url_params[param][0]
-
-
-
-
     return query_dict
 
 ## Private Method ##
@@ -99,9 +95,6 @@ def discovery(request):
             pictures = picture_ordering(pictures, sort_style, sort_order)
             context_dict['sort_style'] = sort_style
             context_dict['sort_order'] = sort_order
-
-
-
         else:
             context_dict['sort_style'] = "new"
             context_dict['sort_order'] = "desc"
@@ -194,7 +187,7 @@ def search_result(request):
         context_dict['query'] = query_text
         return render(request, 'upskill_photography/search.html', context=context_dict)
 
-
+## Private Method ##
 def search_function(query_text):
     results = []
     keywords = query_text.lower().split(' ')
