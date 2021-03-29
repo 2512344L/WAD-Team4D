@@ -1,6 +1,6 @@
 from datetime import datetime
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.utils.decorators import method_decorator
@@ -261,7 +261,6 @@ class LikePictureView(View):
     @method_decorator(login_required)
     def get(self, request):
         picture_id = request.GET['picture_id']
-        print(picture_id)
         picture = None
         try:
             picture = Picture.objects.get(picture_id=picture_id)

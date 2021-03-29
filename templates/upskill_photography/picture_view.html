@@ -6,16 +6,50 @@
 {% endblock %}
 
 {% block body_block %}
-{% if picture %}
-	<strong>{{ picture.views }}</strong> views
-	{% if user.is_authenticated %}
-	<strong id="like_count">{{ picture.likes }}</strong> likes
-	<button id="like_btn"
-			data-pictureid="{{ picture.picture_id }}"
-			class="btn btn-primary btn-sm"
-			type="button">Like</button>
-	{% endif %}
-{% else %}
-This picture does not exist
-{% endif %}
+<div class="row">
+	<div class="col-2">
+		<p><strong>{{ picture.title }}</strong><br>
+			By <a href="{% url 'upskill_photography:userprofile' picture.uploading_user %}" style="color: black"><span>{{ picture.uploading_user.user.username }}</span></a></p>
+		<p>Category <a href="{% url 'upskill_photography:show_category' picture.category.slug %}" style="color: black"><span>{{ picture.category.name }}</span></a></p>
+		<p>Uploaded {{ picture.timestamp }}</p>
+		<p>{{ picture.views }} views</p>
+		<p>
+			<span id="like_count">{{ picture.likes }}</span> likes
+			{% if user.is_authenticated %}
+			<button id="like_btn"
+					data-pictureid="{{ picture.picture_id }}"
+					data-longitude="{{ picture.longitude }}"
+					data-latitude="{{ picture.latitude }}"
+					class="float-right btn btn-sm"
+					type="button">
+				<img id="like-img" src="{% static 'images/like_blank.ico' %}" width="16" height="16">
+				Like
+			</button>
+			{% endif %}
+		</p>
+		{% if picture.latitude %}
+		<p>
+			Location:<br>
+			{{ picture.longitude }}, {{ picture.latitude }} (long, lat)<br><br>
+			<button id="map-toggle" class="btn btn-dark" type="button" onclick="toggleMapFunction()">Show Location</button>
+		</p>
+		{% endif %}
+	</div>
+	
+	<div class="col-8">
+		<div id="img-container">
+			<img id="picture_image" src="{{ picture.image.url }}" class="img-thumbnail img-responsive" alt="{{ picture.title }}">
+		</div>
+		{% if picture.latitude %}
+		<div id="map-container"></div>
+		{% endif %}
+	</div>
+	
+	<div class="col-2">
+		Comments
+	</div>
+</div>
+
+
+
 {% endblock %}
