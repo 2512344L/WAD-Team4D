@@ -10,4 +10,16 @@ $(document).ready(function() {
 				$('#like_btn').hide();
 			})
 	});
+	$('.comment_delete_btn').click(function() {
+		var commentIdVar;
+		commentIdVar = $(this).attr('data-commentid');
+		
+		$.get('/remove_comment/',
+			{'comment_id': commentIdVar},
+			function(data) {
+				if ( data == 0) {
+					$('#cid-' + commentIdVar).remove();
+				}
+			})
+	});
 });

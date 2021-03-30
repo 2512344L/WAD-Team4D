@@ -9,6 +9,7 @@
 {% block body_block %}
 {% if pictures %}
 <div class="w-75 mx-auto m-4">
+	<h2 class="text-center"><strong>Our Best Pictures</strong></h2>
 	<div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
 		<ol class="carousel-indicators">
 			<li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>
@@ -44,6 +45,7 @@
 			{% endfor %}
 		</div>
 	</div>
+	<p><a href="{% url 'upskill_photography:discovery' %}" class="text-dark"><h4 class="text-center"><strong>Discover More Pictures</strong></h4></a></p>
 </div>
 {% endif %}
 

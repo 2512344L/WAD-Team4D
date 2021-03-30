@@ -16,7 +16,7 @@
 			{{ picture.likes }}
 			<img src="{% static 'images/like_blank.ico' %}" width="16" height="16">
 		</div><br>
-		<span>{{ picture.timestamp }}</span><br>
+		<span>{{ picture.timestamp | date:"F d Y" }}</span><br>
 		{% if picture.latitude %}
 		{% if picture.longitude %}
 		<span>({{ picture.latitude }}, {{ picture.longitude }})</span>

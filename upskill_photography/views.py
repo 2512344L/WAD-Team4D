@@ -5,7 +5,7 @@ from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.utils.decorators import method_decorator
 from django.views import View
-from upskill_photography.models import Picture, UserProfile, User, Category
+from upskill_photography.models import Picture, UserProfile, User, Category, Comment
 from urllib.parse import urlencode, urlparse, parse_qs
 
 from django.core.files.storage import FileSystemStorage
@@ -226,14 +226,35 @@ def userprofile(request, userprofile_username):
 
 
 def picture_view(request, userprofile_username, picture_id):
-    try:
-        picture = Picture.objects.get(picture_id=picture_id)
-        picture.views = picture.views + 1
-        picture.save()
-        context_dict['picture'] = picture
-    except Picture.DoesNotExist:
-        context_dict['picture'] = None
-    return render(request, 'upskill_photography/picture_view.html', context=context_dict)
+    if request.method == "POST":
+        comment_username = request.POST.get('comment_username', None)
+        comment_text = request.POST.get('comment_text', None)
+        picture = None
+        user = None
+        try:
+            picture = Picture.objects.get(picture_id=picture_id)
+            user = UserProfile.objects.get(user=User.objects.get(username=comment_username))
+        except Picture.DoesNotExist:
+            pass
+        except (UserProfile.DoesNotExist, User.DoesNotExist):
+            pass
+        if user and comment_text and picture:
+            comment = Comment(picture=picture, user=user, text=comment_text)
+            comment.save()
+        return redirect(reverse('upskill_photography:picture_view', kwargs={'userprofile_username': userprofile_username, 'picture_id': picture_id}))
+    else:
+        try:
+            picture = Picture.objects.get(picture_id=picture_id)
+            comments = Comment.objects.filter(picture=picture).order_by('-timestamp')
+            picture.views = picture.views + 1
+            picture.save()
+            more_pictures = list(Picture.objects.filter(uploading_user=picture.uploading_user).order_by('-likes'))[0:10]
+            context_dict['picture'] = picture
+            context_dict['comments'] = comments
+            context_dict['more_pictures'] = more_pictures
+        except Picture.DoesNotExist:
+            context_dict['picture'] = None
+        return render(request, 'upskill_photography/picture_view.html', context=context_dict)
 
 
 @login_required
@@ -257,6 +278,7 @@ def upload(request):
     return render(request, 'upskill_photography/upload.html', context=context)
 
 
+# Handles AJAX requests for liking pictures
 class LikePictureView(View):
     @method_decorator(login_required)
     def get(self, request):
@@ -270,3 +292,15 @@ class LikePictureView(View):
         picture.likes = picture.likes + 1
         picture.save()
         return HttpResponse(picture.likes)
+
+
+# Handles AJAX requests for removing comments
+class RemoveCommentView(View):
+    @method_decorator(login_required)
+    def get(self, request):
+        comment_id = request.GET['comment_id']
+        try:
+            Comment.objects.get(id=comment_id).delete()
+        except Comment.DoesNotExist:
+            return HttpResponse(-1)
+        return HttpResponse(0);
