@@ -15,10 +15,11 @@ from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.core.files.storage import FileSystemStorage
 from django.views.generic import ListView
 
-# Initialize the Context dict and add the categories to it by default
-context_dict = {}
-context_dict['categories'] = list(Category.objects.all())
-
+def get_categories(context_dict):
+    try:
+        context_dict['categories'] = list(Category.objects.all())
+    except:
+        pass
 
 # This should be called whenever we want to extract parameters from the request url string
 def get_query_parameters(request):
@@ -57,26 +58,40 @@ def picture_ordering(pictures, sort_style, sort_order):
 
 
 def index(request):
+    context_dict = {}
+    get_categories(context_dict)
     # Retrieve the 10 most liked pictures and add them to the context dict
-    context_dict['first_picture'] = list(Picture.objects.order_by('-likes'))[0]
-    context_dict['pictures'] = list(Picture.objects.order_by('-likes'))[1:10]
-    context_dict['counter'] = list(range(1, len(context_dict['pictures']) + 1))
+    try:
+        context_dict['first_picture'] = list(Picture.objects.order_by('-likes'))[0]
+        context_dict['pictures'] = list(Picture.objects.order_by('-likes'))[1:10]
+        context_dict['counter'] = list(range(1, len(context_dict['pictures']) + 1))
+    except:
+        context_dict['first_picture'] = None
+        context_dict['pictures'] = None
+        context_dict['counter'] = None
     return render(request, 'upskill_photography/index.html', context=context_dict)
 
 
 def about(request):
+    context_dict = {}
+    get_categories(context_dict)
     return render(request, 'upskill_photography/about.html', context=context_dict)
 
 
 def contact(request):
+    context_dict = {}
+    get_categories(context_dict)
     return render(request, 'upskill_photography/contact.html', context=context_dict)
 
 
 def faq(request):
+    context_dict = {}
+    get_categories(context_dict)
     return render(request, 'upskill_photography/faq.html', context=context_dict)
 
 
 def discovery(request):
+    context_dict = {}
     if request.method == "POST":
         query_string = {}
 
@@ -91,6 +106,7 @@ def discovery(request):
         else:
             return redirect(reverse('upskill_photography:discovery'))
     else:
+        get_categories(context_dict)
         query_dict = get_query_parameters(request)
         pictures = Picture.objects.order_by('-timestamp')
 
@@ -108,6 +124,8 @@ def discovery(request):
 
 
 def categories(request):
+    context_dict = {}
+    get_categories(context_dict)
     pictures = []
     for category in context_dict['categories']:
         pictures = pictures + list(Picture.objects.filter(category=Category.objects.get(name=category.name)).order_by('-likes'))[0:1]
@@ -116,6 +134,7 @@ def categories(request):
 
 
 def show_category(request, category_name_slug):
+    context_dict = {}
     if request.method == "POST":
         query_string = {}
         
@@ -130,6 +149,7 @@ def show_category(request, category_name_slug):
         else:
             return redirect(reverse('upskill_photography:show_category', kwargs={'category_name_slug': category_name_slug}))
     else:
+        get_categories(context_dict)
         query_dict = get_query_parameters(request)
         pictures = []
         try:
@@ -154,6 +174,7 @@ def show_category(request, category_name_slug):
 
 
 def search_result(request):
+    context_dict = {}
     if request.method == "POST":
         query_string = {}
 
@@ -172,6 +193,7 @@ def search_result(request):
         else:
             return redirect(reverse('upskill_photography:search_result'))
     else:
+        get_categories(context_dict)
         query_dict = get_query_parameters(request)
         query_text = ""
         if 'query' in query_dict:
@@ -217,6 +239,8 @@ def search_function(query_text):
 
 
 def userprofile(request, userprofile_username):
+    context_dict = {}
+    get_categories(context_dict)
     try:
         user = User.objects.get(username=userprofile_username)
         context_dict['user'] = UserProfile.objects.get(user=user)
@@ -226,6 +250,8 @@ def userprofile(request, userprofile_username):
 
 
 def picture_view(request, userprofile_username, picture_id):
+    context_dict = {}
+    get_categories(context_dict)
     if request.method == "POST":
         comment_username = request.POST.get('comment_username', None)
         comment_text = request.POST.get('comment_text', None)
@@ -259,23 +285,28 @@ def picture_view(request, userprofile_username, picture_id):
 
 @login_required
 def account(request):
+    context_dict = {}
+    get_categories(context_dict)
     return render(request, 'upskill_photography/account.html', context=context_dict)
 
 
 @login_required
 def uploads(request):
+    context_dict = {}
+    get_categories(context_dict)
     return render(request, 'upskill_photography/uploads.html', context=context_dict)
 
 
 @login_required
 def upload(request):
-    context = {}
+    context_dict = {}
+    get_categories(context_dict)
     if request.method == "POST":
         uploaded_file = request.FILES('document')
         fs = FileSystemStorage
         name=fs.save(uploaded_file.name, uploaded_file)
-        context['url'] = fs.url(name)
-    return render(request, 'upskill_photography/upload.html', context=context)
+        context_dict['url'] = fs.url(name)
+    return render(request, 'upskill_photography/upload.html', context=context_dict)
 
 
 # Handles AJAX requests for liking pictures
