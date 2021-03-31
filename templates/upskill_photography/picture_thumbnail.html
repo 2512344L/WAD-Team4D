@@ -9,12 +9,12 @@
 		<a href="{% url 'upskill_photography:userprofile' picture.uploading_user %}" style="color: black"><span>{{ picture.uploading_user.user.username }}</span></a>
 		<div class="float-right">
 			{{ picture.views }}
-			<img src="{% static 'images/view.ico' %}" width="16" height="16">
+			<img src="{% static 'images/view.ico' %}" alt="Views Icon" width="16" height="16">
 		</div><br>
 		<a href="{% url 'upskill_photography:show_category' picture.category.slug %}" style="color: black"><span>{{ picture.category.name }}</span></a>
 		<div class="float-right">
 			{{ picture.likes }}
-			<img src="{% static 'images/like_blank.ico' %}" width="16" height="16">
+			<img src="{% static 'images/like_blank.ico' %}" alt="Empty Like Icon" width="16" height="16">
 		</div><br>
 		<span>{{ picture.timestamp | date:"F d Y" }}</span><br>
 		{% if picture.latitude %}

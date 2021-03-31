@@ -11,9 +11,9 @@
 <div class="row py-2">
 	<div class="col-2">
 		<p><strong>{{ picture.title }}</strong><br>
-			By <a href="{% url 'upskill_photography:userprofile' picture.uploading_user %}" style="color: black"><span>{{ picture.uploading_user.user.username }}</span></a></p>
-		<p>Category <a href="{% url 'upskill_photography:show_category' picture.category.slug %}" style="color: black"><span>{{ picture.category.name }}</span></a></p>
-		<p>Uploaded {{ picture.timestamp | date:"F d Y" }}</p>
+			By <a href="{% url 'upskill_photography:userprofile' picture.uploading_user.user.username %}" style="color: black"><span>{{ picture.uploading_user.user.username }}</span></a></p>
+		<p>Category: <a href="{% url 'upskill_photography:show_category' picture.category.slug %}" style="color: black"><span>{{ picture.category.name }}</span></a></p>
+		<p>Uploaded: {{ picture.timestamp | date:"F d Y" }}</p>
 		<p>{{ picture.views }} views</p>
 		<p>
 			<span id="like_count">{{ picture.likes }}</span> likes
@@ -63,7 +63,7 @@
 		{% for comment in comments %}
 		<div id="cid-{{ comment.id }}" class="border border-dark rounded">
 			<div>
-				<strong class="pl-2">{{ comment.user.user.username }}</strong>
+				<strong class="pl-2"><a href="{% url 'upskill_photography:userprofile' comment.user.user.username %}" class="text-dark">{{ comment.user.user.username }}</a></strong>
 				{% if user == comment.user.user %}
 				<button class="comment_delete_btn btn btn-link text-danger float-right" data-commentid="{{ comment.id }}">
 					<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-square float-right" viewBox="0 0 16 16">
@@ -85,7 +85,7 @@
 <div>
 	{% if more_pictures %}
 	<hr>
-	<p><strong>More Pictures By {{ picture.uploading_user.user.username }}</strong></p>
+	<p><strong>More Pictures By <a href="{% url 'upskill_photography:userprofile' picture.uploading_user.user.username %}" class="text-dark">{{ picture.uploading_user.user.username }}</a></strong></p>
 	<div class="row imagetiles">
 		{% for picture in more_pictures %}
 			{% get_picture_thumbnail picture %}
