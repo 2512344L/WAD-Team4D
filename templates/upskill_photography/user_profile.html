@@ -2,16 +2,16 @@
 {% load staticfiles %}
 
 {% block title_block %}
-      {% if user %}
-	  {{ user.user.username }}
+      {% if userprofile %}
+	  {{ userprofile.user.username }}
 	  {% else %}
 	  Invalid Username
 	  {% endif %}
 {% endblock %}
 
 {% block body_block %}
-	{% if user %}
-	{{ user.user.username }}'s User Profile
+	{% if userprofile %}
+	{{ userprofile.user.username }}'s User Profile
 	{% else %}
 	The user does not exist
 	{% endif %}

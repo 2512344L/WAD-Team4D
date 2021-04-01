@@ -243,9 +243,12 @@ def userprofile(request, userprofile_username):
     get_categories(context_dict)
     try:
         user = User.objects.get(username=userprofile_username)
-        context_dict['user'] = UserProfile.objects.get(user=user)
-    except (User.DoesNotExist, UserProfile.DoesNotExist):
-        context_dict['user'] = None
+        user_profile = UserProfile.objects.get(user=user)
+        print("User Profile:", user_profile)
+        context_dict['userprofile'] = user_profile
+    except (User.DoesNotExist, UserProfile.DoesNotExist) as e:
+        print(e)
+        context_dict['userprofile'] = None
     return render(request, 'upskill_photography/user_profile.html', context=context_dict)
 
 
