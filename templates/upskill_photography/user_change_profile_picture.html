@@ -1,0 +1,21 @@
+{% extends 'upskill_photography/base.html' %}
+{% load staticfiles %}
+
+{% block title_block %}
+   Change Profile Picture`
+{% endblock %}
+
+{% block body_block %}
+<h2> Change Profile Picture</h2>
+<form method="post" enctype="multipart/form-data" class="p-4">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <button type="submit" class="btn btn-primary">Change Profile Picture</button>
+</form>
+<a class="btn btn-danger" href="{% url 'upskill_photography:userprofile' user.username %}">Cancel</a>
+
+{% if img_obj %}
+  <h3>Succesfully uploaded : {{img_obj.title}}</h3>
+  <img src="{{ img_obj.image.url}}" alt="connect" style="max-height:300px">
+{% endif %}
+{% endblock %}

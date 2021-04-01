@@ -5,6 +5,7 @@ from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.utils.decorators import method_decorator
 from django.views import View
+from upskill_photography.forms import ProfilePictureForm
 from upskill_photography.models import Picture, UserProfile, User, Category, Comment
 from urllib.parse import urlencode, urlparse, parse_qs
 
@@ -250,15 +251,24 @@ def userprofile(request, userprofile_username):
         
         if len(query_string) > 0:
             encoded_query_string = urlencode(query_string)
-            return redirect(reverse('upskill_photography:show_category', kwargs={'userprofile_username': userprofile_username}) + f"?{encoded_query_string}")
+            return redirect(reverse('upskill_photography:userprofile', kwargs={'userprofile_username': userprofile_username}) + f"?{encoded_query_string}")
         else:
-            return redirect(reverse('upskill_photography:show_category', kwargs={'userprofile_username': userprofile_username}))
+            return redirect(reverse('upskill_photography:userprofile', kwargs={'userprofile_username': userprofile_username}))
     else:
         get_categories(context_dict)
+        query_dict = get_query_parameters(request)
         try:
             user = User.objects.get(username=userprofile_username)
             user_profile = UserProfile.objects.get(user=user)
             pictures = Picture.objects.filter(uploading_user=user_profile)
+            if pictures and 'sort' in query_dict:
+                sort_style, sort_order = query_dict['sort'].split('_')
+                pictures = picture_ordering(pictures, sort_style, sort_order)   
+                context_dict['sort_style'] = sort_style
+                context_dict['sort_order'] = sort_order
+            else:
+                context_dict['sort_style'] = "new"
+                context_dict['sort_order'] = "desc"
             context_dict['userprofile'] = user_profile
             context_dict['pictures'] = pictures
             views = 0
@@ -320,6 +330,22 @@ def account(request):
     context_dict = {}
     get_categories(context_dict)
     return render(request, 'upskill_photography/account.html', context=context_dict)
+
+
+@login_required
+def change_profile_picture(request):
+    if request.method == "POST":
+        form = ProfilePictureForm(request.POST, request.FILES)
+        if form.is_valid():
+            user_profile = UserProfile.objects.get(user=request.user)
+            user_profile.profile_picture = form.cleaned_data.get("profile_picture")
+            user_profile.save()
+        return redirect(reverse('upskill_photography:userprofile', kwargs={'userprofile_username': request.user.username}))
+    else:            
+        context_dict = {}
+        get_categories(context_dict)
+        context_dict['form'] = ProfilePictureForm()
+        return render(request, 'upskill_photography/user_change_profile_picture.html', context=context_dict)
 
 
 @login_required

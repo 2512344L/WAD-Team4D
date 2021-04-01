@@ -23,7 +23,7 @@
 				{% endif %}
 				{% if userprofile.user == user %}
 				<div class="p-2 text-center">
-					<a href="#" class="btn btn-sm btn-outline-light">Change Profile Picture</a>
+					<a href="{% url 'upskill_photography:change_profile_picture' %}" class="btn btn-sm btn-outline-light">{% if userprofile.profile_picture %}Change Profile Picture{% else %}Add Profile Picture{% endif %}</a>
 				</div>
 				{% endif %}
 				</div>

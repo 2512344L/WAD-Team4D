@@ -32,6 +32,7 @@
 				<span>{{ picture.title }}</span>
 			</div>
 			<div class="text-nowrap overflow-hidden">
+				<span>Category: {{ picture.category.name }}</span><br>
 				<span>Views: {{ picture.views }}, Likes: {{ picture.likes }}</span><br>
 				<span>{{ picture.timestamp }}</span><br>
 				{% if picture.latitude and picture.longitude %}

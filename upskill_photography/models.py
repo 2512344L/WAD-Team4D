@@ -25,6 +25,47 @@ class UserProfile(models.Model):
     
     profile_picture = models.ImageField(upload_to='profile_images', blank=True)
     
+    def save(self, *args, **kwargs):
+        if self.profile_picture:
+            if not self.make_thumbnail():
+                raise Exception('Could not create thumbnail - is the file type valid?')
+        super(UserProfile, self).save(*args, **kwargs)
+    
+    def make_thumbnail(self):
+        image = Image.open(self.profile_picture)
+        width, height = image.size
+        if width > height:
+            new_width = height
+            new_height = height
+        else:
+            new_width = width
+            new_height = width
+        left = (width - new_width)//2
+        top = (height - new_height)//2
+        right = (width + new_width)//2
+        bottom = (height + new_height)//2
+        image = image.crop(box=(left, top, right, bottom))
+        image.thumbnail((480,480), Image.ANTIALIAS)
+        thumb_name, thumb_extension = os.path.splitext(self.profile_picture.name)
+        thumb_extension = thumb_extension.lower()
+        thumb_filename = thumb_name + '_thumb' + thumb_extension
+        if thumb_extension in ['.jpg', '.jpeg']:
+            FTYPE = 'JPEG'
+        elif thumb_extension == '.gif':
+            FTYPE = 'GIF'
+        elif thumb_extension == '.png':
+            FTYPE = 'PNG'
+        else:
+            return False    # Unrecognized file type
+        # Save thumbnail to in-memory file as StringIO
+        temp_thumb = BytesIO()
+        image.save(temp_thumb, FTYPE)
+        temp_thumb.seek(0)
+        # set save=False, otherwise it will run in an infinite loop
+        self.profile_picture.save(thumb_filename, ContentFile(temp_thumb.read()), save=False)
+        temp_thumb.close()
+        return True
+    
     def __str__(self):
         return f'{self.user.username}'
 
