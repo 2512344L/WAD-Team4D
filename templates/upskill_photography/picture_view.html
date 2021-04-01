@@ -20,8 +20,6 @@
 			{% if user.is_authenticated %}
 			<button id="like_btn"
 					data-pictureid="{{ picture.picture_id }}"
-					data-longitude="{{ picture.longitude }}"
-					data-latitude="{{ picture.latitude }}"
 					class="float-right btn btn-sm"
 					type="button">
 				<img id="like-img" src="{% static 'images/like_blank.ico' %}" width="16" height="16">
@@ -33,7 +31,7 @@
 		<p>
 			Location:<br>
 			{{ picture.longitude }}, {{ picture.latitude }} (long, lat)<br><br>
-			<button id="map-toggle" class="btn btn-dark" type="button" onclick="toggleMapFunction()">Show Location</button>
+			<button id="map-toggle" data-longitude="{{ picture.longitude }}" data-latitude="{{ picture.latitude }}"class="btn btn-dark" type="button" onclick="toggleMapFunction()">Show Map</button>
 		</p>
 		{% endif %}
 	</div>
@@ -43,7 +41,7 @@
 			<img id="picture_image" src="{{ picture.image.url }}" class="img-thumbnail img-responsive" alt="{{ picture.title }}">
 		</div>
 		{% if picture.latitude %}
-		<div id="map-container"></div>
+		<div id="map-container" data-show-location="true"></div>
 		{% endif %}
 	</div>
 	

@@ -5,13 +5,13 @@ from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.utils.decorators import method_decorator
 from django.views import View
-from upskill_photography.forms import ProfilePictureForm
+from PIL import Image
+from upskill_photography.forms import PictureUploadForm, ProfilePictureForm
 from upskill_photography.models import Picture, UserProfile, User, Category, Comment
 from urllib.parse import urlencode, urlparse, parse_qs
 
 from django.core.files.storage import FileSystemStorage
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
-from .forms import UploadFileForm
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.core.files.storage import FileSystemStorage
 from django.views.generic import ListView
@@ -363,13 +363,24 @@ def uploads(request):
 @login_required
 def upload(request):
     context_dict = {}
-    get_categories(context_dict)
     if request.method == "POST":
-        uploaded_file = request.FILES('document')
-        fs = FileSystemStorage
-        name=fs.save(uploaded_file.name, uploaded_file)
-        context_dict['url'] = fs.url(name)
-    return render(request, 'upskill_photography/upload.html', context=context_dict)
+        form = PictureUploadForm(request.POST, request.FILES)
+        if form.is_valid():
+            allow_location = request.POST.get('use_location', None)
+            uploading_user = UserProfile.objects.get(user=request.user)
+            title = form.cleaned_data.get("title")
+            image = form.cleaned_data.get("image")
+            category = form.cleaned_data.get("category")
+            lng = request.POST.get('longitude', None)
+            lat = request.POST.get('latitude', None)
+            if lng == "" or lat == "" or allow_location == None:
+                lng = lat = None
+            Picture.objects.create(uploading_user=uploading_user, title=title, image=image, category=category, longitude=lng, latitude=lat)
+        return redirect(reverse('upskill_photography:discovery'))
+    else:
+        get_categories(context_dict)
+        context_dict['form'] = PictureUploadForm()
+        return render(request, 'upskill_photography/upload.html', context=context_dict)
 
 
 # Handles AJAX requests for liking pictures
