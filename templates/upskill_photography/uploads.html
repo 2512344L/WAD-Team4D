@@ -36,7 +36,8 @@
 				<span>Views: {{ picture.views }}, Likes: {{ picture.likes }}</span><br>
 				<span>{{ picture.timestamp }}</span><br>
 				{% if picture.latitude and picture.longitude %}
-				<span>({{ picture.latitude }}, {{ picture.longitude }})</span>
+				<span>Location:</span><br>
+				<span>   ({{ picture.latitude }}, {{ picture.longitude }})</span>
 				{% endif %}
 			</div>
 		</div>
