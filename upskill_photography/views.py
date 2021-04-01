@@ -1,28 +1,24 @@
 from datetime import datetime
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, JsonResponse
-from django.shortcuts import render, redirect
+from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.utils.decorators import method_decorator
 from django.views import View
 from PIL import Image
 from upskill_photography.forms import PictureUploadForm, ProfilePictureForm
-from upskill_photography.models import Picture, UserProfile, User, Category, Comment
+from upskill_photography.models import Category, Comment, Picture, User, UserProfile
 from urllib.parse import urlencode, urlparse, parse_qs
 
-from django.core.files.storage import FileSystemStorage
-from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
-from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-from django.core.files.storage import FileSystemStorage
-from django.views.generic import ListView
-
+## Private Method - Adds all current category objects to the given context dictionary ##
 def get_categories(context_dict):
     try:
         context_dict['categories'] = list(Category.objects.all())
     except:
         pass
 
-# This should be called whenever we want to extract parameters from the request url string
+
+## Private Method - Retreives the query string from a GET request ##
 def get_query_parameters(request):
     query_dict = {}
     if request.method == "GET":
@@ -31,29 +27,25 @@ def get_query_parameters(request):
             query_dict[param] = url_params[param][0]
     return query_dict
 
-## Private Method ##
+
+## Private Method - Orders a set of pictures in the given style and order ##
 def picture_ordering(pictures, sort_style, sort_order):
     def upload_time(picture):
         return picture.timestamp
-
     def views(picture):
         return picture.views
-
     def likes(picture):
         return picture.likes
 
     pictures = list(pictures)
-
     reverse = True
     if sort_order == "asc":
         reverse = False
-
     func = upload_time
     if sort_style == "views":
         func = views
     elif sort_style == "likes":
         func = likes
-
     pictures.sort(reverse=reverse, key=func)
     return pictures
 
@@ -61,15 +53,15 @@ def picture_ordering(pictures, sort_style, sort_order):
 def index(request):
     context_dict = {}
     get_categories(context_dict)
-    # Retrieve the 10 most liked pictures and add them to the context dict
     try:
+        # Retrieve the 10 most liked pictures to be displayed in the carousel.
+        # There is a difference between the first picture and the others,
+        # since the first picture needs to be selected to be displayed at the start.
         context_dict['first_picture'] = list(Picture.objects.order_by('-likes'))[0]
         context_dict['pictures'] = list(Picture.objects.order_by('-likes'))[1:10]
         context_dict['counter'] = list(range(1, len(context_dict['pictures']) + 1))
     except:
-        context_dict['first_picture'] = None
-        context_dict['pictures'] = None
-        context_dict['counter'] = None
+        pass
     return render(request, 'upskill_photography/index.html', context=context_dict)
 
 
@@ -95,12 +87,12 @@ def discovery(request):
     context_dict = {}
     if request.method == "POST":
         query_string = {}
-
+        # Retrieve the sort style and order to pass as a query string
+        # in the GET request to the same page
         sort_style = request.POST.get('sort_style', "")
         sort_order = request.POST.get('sort_order', "")
         if sort_style != "" and sort_order != "":
             query_string['sort'] = sort_style + "_" + sort_order
-
         if len(query_string) > 0:
             encoded_query_string = urlencode(query_string)
             return redirect(reverse('upskill_photography:discovery') + f"?{encoded_query_string}")
@@ -109,9 +101,10 @@ def discovery(request):
     else:
         get_categories(context_dict)
         query_dict = get_query_parameters(request)
+        # Order the pictures by newest by default
         pictures = Picture.objects.order_by('-timestamp')
-
         if pictures and 'sort' in query_dict:
+            # If a different sort order is specified, re-order the pictures
             sort_style, sort_order = query_dict['sort'].split('_')
             pictures = picture_ordering(pictures, sort_style, sort_order)
             context_dict['sort_style'] = sort_style
@@ -129,6 +122,7 @@ def categories(request):
     get_categories(context_dict)
     pictures = []
     for category in context_dict['categories']:
+        # Get the Most liked picture of each category to be used as thumbnails
         pictures = pictures + list(Picture.objects.filter(category=Category.objects.get(name=category.name)).order_by('-likes'))[0:1]
     context_dict['pictures'] = pictures
     return render(request, 'upskill_photography/categories.html', context=context_dict)
@@ -138,12 +132,12 @@ def show_category(request, category_name_slug):
     context_dict = {}
     if request.method == "POST":
         query_string = {}
-        
+        # Retrieve the sort style and order to pass as a query string
+        # in the GET request to the same page
         sort_style = request.POST.get('sort_style', "")
         sort_order = request.POST.get('sort_order', "")
         if sort_style != "" and sort_order != "":
             query_string['sort'] = sort_style + "_" + sort_order
-        
         if len(query_string) > 0:
             encoded_query_string = urlencode(query_string)
             return redirect(reverse('upskill_photography:show_category', kwargs={'category_name_slug': category_name_slug}) + f"?{encoded_query_string}")
@@ -154,6 +148,7 @@ def show_category(request, category_name_slug):
         query_dict = get_query_parameters(request)
         pictures = []
         try:
+            # Attempt to get the category by its slug and retrieve all pictures of that category, newest first
             category = Category.objects.get(slug=category_name_slug)
             pictures = list(Picture.objects.filter(category=Category.objects.get(slug=category_name_slug)).order_by('-timestamp'))
             context_dict['category'] = category
@@ -162,6 +157,7 @@ def show_category(request, category_name_slug):
             pictures = None
         
         if pictures and 'sort' in query_dict:
+            # If a different sort order is specified, re-order the pictures
             sort_style, sort_order = query_dict['sort'].split('_')
             pictures = picture_ordering(pictures, sort_style, sort_order)   
             context_dict['sort_style'] = sort_style
@@ -178,11 +174,12 @@ def search_result(request):
     context_dict = {}
     if request.method == "POST":
         query_string = {}
-
+        # Retrieve the sort style and order to pass as a query string
+        # in the GET request to the same page
+        # Retrieve the search query and pass it to the query string
         query_text = request.POST.get('search_query', None)
         if query_text:
             query_string['query'] = query_text
-
         sort_style = request.POST.get('sort_style', "")
         sort_order = request.POST.get('sort_order', "")
         if sort_style != "" and sort_order != "":
@@ -196,15 +193,16 @@ def search_result(request):
     else:
         get_categories(context_dict)
         query_dict = get_query_parameters(request)
+        # Handle the search query passed in the query string
         query_text = ""
         if 'query' in query_dict:
             query_text = query_dict['query']
-
         results = search_function(query_text)
 
         context_dict['sort_style'] = "relevance"
         context_dict['sort_order'] = "relevance"
         if results and 'sort' in query_dict:
+            # If a different sort order is specified, re-order the pictures
             sort_style, sort_order = query_dict['sort'].split('_')
             results = picture_ordering(results, sort_style, sort_order)
             context_dict['sort_style'] = sort_style
@@ -214,7 +212,8 @@ def search_result(request):
         context_dict['query'] = query_text
         return render(request, 'upskill_photography/search.html', context=context_dict)
 
-## Private Method ##
+
+## Private Method - Performs a basic search of the database through a search string ##
 def search_function(query_text):
     results = []
     keywords = query_text.lower().split(' ')
@@ -243,12 +242,12 @@ def userprofile(request, userprofile_username):
     context_dict = {}
     if request.method == "POST":
         query_string = {}
-        
+        # Retrieve the sort style and order to pass as a query string
+        # in the GET request to the same page
         sort_style = request.POST.get('sort_style', "")
         sort_order = request.POST.get('sort_order', "")
         if sort_style != "" and sort_order != "":
             query_string['sort'] = sort_style + "_" + sort_order
-        
         if len(query_string) > 0:
             encoded_query_string = urlencode(query_string)
             return redirect(reverse('upskill_photography:userprofile', kwargs={'userprofile_username': userprofile_username}) + f"?{encoded_query_string}")
@@ -262,6 +261,7 @@ def userprofile(request, userprofile_username):
             user_profile = UserProfile.objects.get(user=user)
             pictures = Picture.objects.filter(uploading_user=user_profile)
             if pictures and 'sort' in query_dict:
+                # If a different sort order is specified, re-order the pictures
                 sort_style, sort_order = query_dict['sort'].split('_')
                 pictures = picture_ordering(pictures, sort_style, sort_order)   
                 context_dict['sort_style'] = sort_style
@@ -274,6 +274,7 @@ def userprofile(request, userprofile_username):
             views = 0
             likes = 0
             comments_received = 0
+            # Count the likes, views, and comments of each picture uploaded by this user
             for picture in pictures:
                 views = views + picture.views
                 likes = likes + picture.likes
@@ -283,6 +284,7 @@ def userprofile(request, userprofile_username):
             context_dict['total_likes'] = likes
             context_dict['comments_received'] = comments_received
             comments_created = 0
+            # Count the comments written by this user
             for comment in Comment.objects.filter(user=user_profile):
                 comments_created += 1
             context_dict['comments_created'] = comments_created
@@ -295,6 +297,8 @@ def picture_view(request, userprofile_username, picture_id):
     context_dict = {}
     get_categories(context_dict)
     if request.method == "POST":
+        # Handle users posting comments on this picture
+        # Create a new comment
         comment_username = request.POST.get('comment_username', None)
         comment_text = request.POST.get('comment_text', None)
         picture = None
@@ -335,6 +339,7 @@ def account(request):
 @login_required
 def change_profile_picture(request):
     if request.method == "POST":
+        # Change the profile picture ImageField
         form = ProfilePictureForm(request.POST, request.FILES)
         if form.is_valid():
             user_profile = UserProfile.objects.get(user=request.user)
@@ -364,6 +369,8 @@ def uploads(request):
 def upload(request):
     context_dict = {}
     if request.method == "POST":
+        # Handle users uploading pictures
+        # lng and lat coordinates are optional and can be left out
         form = PictureUploadForm(request.POST, request.FILES)
         if form.is_valid():
             allow_location = request.POST.get('use_location', None)

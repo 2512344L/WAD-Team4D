@@ -9,16 +9,21 @@ import os
 from PIL import Image
 import uuid
 
+
+## Private Method - Rename the UserProfile profile picture on creation ##
 def rename_profile_picture(instance, filename):
     upload_to="profile_images"
     ext = filename.split('.')[-1]
     filename = '{}.{}'.format(uuid.uuid4().hex, ext)
     return os.path.join(upload_to, filename)
-    
+
+
+## Signal - Every time a new User is created, a corresponding UserProfile is created ##
 @receiver(post_save, sender=User)
 def update_profile_signal(sender, instance, created, **kwargs):
     if created:     
         UserProfile.objects.create(user=instance)
+
 
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
@@ -31,6 +36,7 @@ class UserProfile(models.Model):
                 raise Exception('Could not create thumbnail - is the file type valid?')
         super(UserProfile, self).save(*args, **kwargs)
     
+    ## Private Method - Scales down and crops the profile picture on upload ##
     def make_thumbnail(self):
         image = Image.open(self.profile_picture)
         width, height = image.size
@@ -40,11 +46,8 @@ class UserProfile(models.Model):
         else:
             new_width = width
             new_height = width
-        left = (width - new_width)//2
-        top = (height - new_height)//2
-        right = (width + new_width)//2
-        bottom = (height + new_height)//2
-        image = image.crop(box=(left, top, right, bottom))
+        # Crop the image to a centered square
+        image = image.crop(box=((width - new_width)//2, (height - new_height)//2, (width + new_width)//2, (height + new_height)//2))
         image.thumbnail((480,480), Image.ANTIALIAS)
         thumb_name, thumb_extension = os.path.splitext(self.profile_picture.name)
         thumb_extension = thumb_extension.lower()
@@ -70,15 +73,18 @@ class UserProfile(models.Model):
         return f'{self.user.username}'
 
 
+## Returns the hex representation of a uuid4 ##
 def uuid4_hex():
     return uuid.uuid4().hex
 
+## Private Method - Renames The image on upload ##
 def rename_image(instance, filename):
     upload_to="user_uploads"
     ext = filename.split('.')[-1]
     filename = '{}.{}'.format(uuid.uuid4().hex, ext)
     return os.path.join(upload_to, filename)
 
+## Private Method - Renames The thumbnail on upload ##
 def rename_thumbnail(instance, filename):
     upload_to="user_uploads_thumbnails"
     ext = filename.split('.')[-1]
@@ -103,6 +109,7 @@ class Picture(models.Model):
             raise Exception('Could not create thumbnail - is the file type valid?')
         super(Picture, self).save(*args, **kwargs)
     
+    ## Private Method - Creates the thumbnail from the uploaded image and adds padding to make it square ##
     def make_thumbnail(self):
         unpadded_image = Image.open(self.image)
         unpadded_image = unpadded_image.copy()
@@ -135,8 +142,8 @@ class Picture(models.Model):
     def __str__(self):
         return str(self.uploading_user.user.username) + " - " + str(self.title)
 
-        
-        
+ 
+
 class Comment(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     picture = models.ForeignKey('Picture', on_delete=models.CASCADE)
@@ -146,6 +153,7 @@ class Comment(models.Model):
     
     def __str__(self):
         return str(self.id) + " - " + str(self.text)
+
 
 
 class Category(models.Model):

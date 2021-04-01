@@ -4,6 +4,9 @@ var geocoder;
 var lng;
 var lat;
 
+// Function referenced in picture_view.html
+// Switches between showing the map of the image location (if present)
+// and the picture itself
 function toggleMapFunction() {
 	if( $('#map-container').is(':hidden') ) {
 		$("#map-container").css("display", "initial");
@@ -18,6 +21,8 @@ function toggleMapFunction() {
 
 $(document).ready(function(){
 	if ($('#map-container').attr('data-show-location') == "true") {
+		// Displays a map in the picture view showing the image location of a picture
+		// The div containing the map is resized to be just as large as the picture
 		aspect_ratio = $('#picture_image').height() / $('#picture_image').width();
 		$('#comment_column').height($('#center-column').width() * aspect_ratio);
 		$('#map-container').append("<div id='map' style='width: " + $('#center-column').width() + "px; height: " + $('#center-column').width() * aspect_ratio + "px;'>");
@@ -37,6 +42,7 @@ $(document).ready(function(){
 			.addTo(map);
 	}
 	if ($('#map-container').attr('data-set-location') == "true") {
+		// Displays a map when uploading a picture to set the image location
 		$('#map-checkbox').click(function() {
 			if ( $('#map-checkbox').is(':checked') ) {
 				$("#map-container").css("display", "initial");
