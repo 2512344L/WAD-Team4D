@@ -6,5 +6,10 @@
 {% endblock %}
 
 {% block body_block %}
-	{{ user.username }}'s Account (Settings etc)
+	<div class="bg-dark px-4 pb-4">
+	<p class="text-light"><strong>Account and Settings</strong></p>
+	<p><a href="{% url 'auth_password_change' %}" class="btn btn-outline-light p-2">Change Password</a></p>
+	<p><a href="{% url 'upskill_photography:uploads' %}" class="btn btn-outline-light p-2">View Uploads</a></p>
+	<p><a href="{% url 'upskill_photography:upload' %}" class="btn btn-outline-light">Upload a Picture</a></p>
+	</div>
 {% endblock %}

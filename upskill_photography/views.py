@@ -240,16 +240,45 @@ def search_function(query_text):
 
 def userprofile(request, userprofile_username):
     context_dict = {}
-    get_categories(context_dict)
-    try:
-        user = User.objects.get(username=userprofile_username)
-        user_profile = UserProfile.objects.get(user=user)
-        print("User Profile:", user_profile)
-        context_dict['userprofile'] = user_profile
-    except (User.DoesNotExist, UserProfile.DoesNotExist) as e:
-        print(e)
-        context_dict['userprofile'] = None
-    return render(request, 'upskill_photography/user_profile.html', context=context_dict)
+    if request.method == "POST":
+        query_string = {}
+        
+        sort_style = request.POST.get('sort_style', "")
+        sort_order = request.POST.get('sort_order', "")
+        if sort_style != "" and sort_order != "":
+            query_string['sort'] = sort_style + "_" + sort_order
+        
+        if len(query_string) > 0:
+            encoded_query_string = urlencode(query_string)
+            return redirect(reverse('upskill_photography:show_category', kwargs={'userprofile_username': userprofile_username}) + f"?{encoded_query_string}")
+        else:
+            return redirect(reverse('upskill_photography:show_category', kwargs={'userprofile_username': userprofile_username}))
+    else:
+        get_categories(context_dict)
+        try:
+            user = User.objects.get(username=userprofile_username)
+            user_profile = UserProfile.objects.get(user=user)
+            pictures = Picture.objects.filter(uploading_user=user_profile)
+            context_dict['userprofile'] = user_profile
+            context_dict['pictures'] = pictures
+            views = 0
+            likes = 0
+            comments_received = 0
+            for picture in pictures:
+                views = views + picture.views
+                likes = likes + picture.likes
+                for comment in Comment.objects.filter(picture=picture):
+                    comments_received += 1
+            context_dict['total_views'] = views
+            context_dict['total_likes'] = likes
+            context_dict['comments_received'] = comments_received
+            comments_created = 0
+            for comment in Comment.objects.filter(user=user_profile):
+                comments_created += 1
+            context_dict['comments_created'] = comments_created
+        except (User.DoesNotExist, UserProfile.DoesNotExist):
+            pass
+        return render(request, 'upskill_photography/user_profile.html', context=context_dict)
 
 
 def picture_view(request, userprofile_username, picture_id):
@@ -297,6 +326,11 @@ def account(request):
 def uploads(request):
     context_dict = {}
     get_categories(context_dict)
+    try:
+        user_profile = UserProfile.objects.get(user=request.user)
+        context_dict['pictures'] = Picture.objects.filter(uploading_user=user_profile).order_by('-timestamp')
+    except (UserProfile.DoesNotExist, Picture.DoesNotExist):
+        pass
     return render(request, 'upskill_photography/uploads.html', context=context_dict)
 
 
@@ -336,5 +370,17 @@ class RemoveCommentView(View):
         try:
             Comment.objects.get(id=comment_id).delete()
         except Comment.DoesNotExist:
+            return HttpResponse(-1)
+        return HttpResponse(0);
+
+
+# Handles AJAX requests for removing pictures
+class RemovePictureView(View):
+    @method_decorator(login_required)
+    def get(self, request):
+        picture_id = request.GET['picture_id']
+        try:
+            Picture.objects.get(picture_id=picture_id).delete()
+        except Picture.DoesNotExist:
             return HttpResponse(-1)
         return HttpResponse(0);

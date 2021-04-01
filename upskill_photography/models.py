@@ -26,7 +26,7 @@ class UserProfile(models.Model):
     profile_picture = models.ImageField(upload_to='profile_images', blank=True)
     
     def __str__(self):
-        return f'{self.user.username} UserProfile'
+        return f'{self.user.username}'
 
 
 def uuid4_hex():
