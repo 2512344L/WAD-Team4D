@@ -7,7 +7,7 @@
 {% endblock %}
 
 {% block body_block %}
-{% if pictures %}
+{% if first_picture %}
 <div class="w-75 mx-auto m-4">
 	<h2 class="text-center"><strong>Our Best Pictures</strong></h2>
 	<div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
@@ -47,21 +47,13 @@
 	</div>
 	<p><a href="{% url 'upskill_photography:discovery' %}" class="text-dark"><h4 class="text-center"><strong>Discover More Pictures</strong></h4></a></p>
 </div>
+{% else %}
+	<h2>OOPS</h2>
+	<h3>It looks likes there are no pictures so far</h3>
+	{% if user.is_authenticated %}
+	<h3>Why don't you make the first move and <a href="{% url 'upskill_photography:upload' %}">Upload</a> your first picture?</h3>
+	{% else %}
+	<h3><a href="{% url 'registration_register' %}">Register Here</a> and upload your first pictures</h3>
+	{% endif %}
 {% endif %}
-
-  {% block content %}
-    {% for post in posts %}
-        <article class="media content-section">
-          <img class="rounded-circle article-img" src="{{ post.author.profile.image.url }}">
-          <div class="media-body">
-            <div class="article-metadata">
-              <a class="mr-2" href="#">{{ picture.uploading_user }}</a>
-              <small class="text-muted">{{ picture.timestamp|date:"F d, Y" }}</small>
-            </div>
-            <h2><a class="article-title" href="{% url 'post-detail' picture.picture_id %}">{{ picture.title }}</a></h2>
-            <p class="article-content">{{ picture.image }}</p>
-          </div>
-        </article>
-    {% endfor %}
-{% endblock content %}
 {% endblock %}

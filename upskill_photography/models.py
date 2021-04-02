@@ -105,7 +105,21 @@ class Picture(models.Model):
     views = models.PositiveIntegerField(default=0)
     
     def save(self, *args, **kwargs):
-        if not self.make_thumbnail():
+        if self.likes < 0:
+            self.likes = 0
+        if self.views < 0:
+            self.views = 0
+        if self.latitude:
+            if self.latitude < -90:
+                self.latitude = -90
+            if self.latitude > 90:
+                self.latitude = 90
+        if self.longitude:
+            if self.longitude < -180:
+                self.longitude = -180
+            if self.longitude > 180:
+                self.longitude = 180
+        if self.image and not self.make_thumbnail():
             raise Exception('Could not create thumbnail - is the file type valid?')
         super(Picture, self).save(*args, **kwargs)
     
