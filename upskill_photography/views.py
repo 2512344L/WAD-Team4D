@@ -36,6 +36,8 @@ def picture_ordering(pictures, sort_style, sort_order):
         return picture.views
     def likes(picture):
         return picture.likes
+    def comments(picture):
+        return len(Comment.objects.filter(picture=picture))
 
     pictures = list(pictures)
     reverse = True
@@ -46,6 +48,8 @@ def picture_ordering(pictures, sort_style, sort_order):
         func = views
     elif sort_style == "likes":
         func = likes
+    elif sort_style == "comments":
+        func = comments
     pictures.sort(reverse=reverse, key=func)
     return pictures
 
