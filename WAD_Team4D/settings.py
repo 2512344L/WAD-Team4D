@@ -27,7 +27,9 @@ SECRET_KEY = 'hh%vrm6(-p$&2-)1tv94i_u3k$6=ws-jc+q&a#7a*pkms$xx+z'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    'mloliverb.pythonanywhere.com',
+]
 
 # Application definition
 
