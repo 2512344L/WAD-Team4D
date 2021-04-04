@@ -79,7 +79,7 @@ def uuid4_hex():
 
 ## Private Method - Renames The image on upload ##
 def rename_image(instance, filename):
-    upload_to="user_uploads"
+    upload_to = "user_uploads"
     ext = filename.split('.')[-1]
     filename = '{}.{}'.format(uuid.uuid4().hex, ext)
     return os.path.join(upload_to, filename)
