@@ -68,7 +68,7 @@ def populate():
             'cars': {'Pictures': picture5, 'views': 32, 'likes': 16}}
     for cat, cat_data in cats.items():
         c = add_cat(cat, views=cat_data['views'], likes=cat_data['likes'])
-        for p in cat_data['pages']:
+        for p in cat_data['pictures']:
             add_picture(c, p['title'], p['image'], p['uploading user'], views=p['views'])
 
     for c in Category.objects.all():
