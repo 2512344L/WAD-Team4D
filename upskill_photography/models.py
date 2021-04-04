@@ -131,7 +131,6 @@ class Picture(models.Model):
         width, height = unpadded_image.size
         image = Image.new("RGB", (480, 480))
         image.paste(unpadded_image, box=((480-width)//2, (480-height)//2, (480-width)//2 + width, (480-height)//2 + height))
-        #image.paste(unpadded_image, ((480-width)//2, (480-height)//2))
         thumb_name, thumb_extension = os.path.splitext(self.image.name)
         thumb_extension = thumb_extension.lower()
         thumb_filename = thumb_name + '_thumb' + thumb_extension
