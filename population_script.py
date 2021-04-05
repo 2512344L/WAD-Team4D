@@ -1,67 +1,73 @@
 import os
-import django
-
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'WAD_Team4D.settings')
+
+import django
 django.setup()
-from upskill_photography.models import Picture, Category
+
+from upskill_photography.models import Picture, Category, User, UserProfile
+from PIL import Image
 
 
 def populate():
-    picture1 = [
-        {'uploading user': 'james',
+    cat = add_cat("Buildings")
+    print(cat)
+    return None
+    add_picture(cat, "car", Image.open("population_script_files/car.jpg"), add_UserProfile("Test_User")) 
+
+
+    user_james = add_UserProfile("James")
+    user_oliver = add_UserProfile("Oliver")
+    user_rojhat = add_UserProfile("Rojhat")
+    user_annie = add_UserProfile("Annie")
+    user_profiles = [user_james,
+                    user_oliver,
+                    user_rojhat,
+                    user_annie,
+                    ]
+
+    pictures = [
+        {'uploading user': user_james,
          'title': 'cats',
          'image': 'static/images/',
          'likes': '10',
          'views': '120',
-         }
-    ]
-    picture2 = [
-        {'uploading user': 'james',
+         },
+        {'uploading user': user_james,
          'title': 'europe',
          'image': 'static/images/',
          'likes': '104',
          'views': '1205',
-         }
-    ]
-    picture3 = [
-        {'uploading user': 'oliver',
+         },
+        {'uploading user': user_oliver,
          'title': 'space',
          'image': 'static/images/',
          'likes': '130',
          'views': '1120',
-         }
-    ]
-    picture4 = [
-        {'uploading user': 'rojhat',
+         },
+        {'uploading user': user_rojhat,
          'title': 'bugatti',
          'image': 'static/images/',
          'likes': '10',
          'views': '120',
-         }
-    ]
-    picture5 = [
-        {'uploading user': 'oliver',
+         },
+        {'uploading user': user_oliver,
          'title': 'pagani',
          'image': 'static/images/',
          'likes': '10046',
          'views': '134456',
-         }
-    ]
-    picture6 = [
-        {'uploading user': 'rojhat',
+         },
+        {'uploading user': user_rojhat,
          'title': 'dogs',
          'image': 'static/images/',
          'likes': '14',
          'views': '99',
-         }
-    ]
-    picture7 = [
-        {'uploading user': 'annie',
+         },
+        {'uploading user': user_annie,
          'title': 'lions',
          'image': 'static/images/',
          'likes': '104',
          'views': '1204',
-         }
+         },
     ]
     cats = {'animals': {'Pictures': picture1, 'views': 128, 'likes': 64},
             'space ': {'Pictures': picture3, 'views': 64, 'likes': 32},
@@ -76,12 +82,17 @@ def populate():
             print(f'- {c}: {p}')
 
 
-def add_cat(name, views=0, likes=0):
-    c: object = Category.objects.get_or_create(name=name)[0]
-    c.views = views
-    c.likes = likes
-    c.save()
-    return c
+def add_UserProfile(name):
+    user = User.objects.get_or_create(username=name)
+    user.save()
+    return UserProfile.objects.get(user=use)
+
+
+def add_cat(name):
+    cat = Category.objects.get_or_create(name=name)[0]
+    cat.name = name
+    cat.save()
+    return cat
 
 
 def add_picture(cat, title, image, uploading_user, views=0, likes=0):

@@ -28,6 +28,7 @@ SECRET_KEY = 'hh%vrm6(-p$&2-)1tv94i_u3k$6=ws-jc+q&a#7a*pkms$xx+z'
 DEBUG = True
 
 ALLOWED_HOSTS = [
+    '127.0.0.1',
     'mloliverb.pythonanywhere.com',
 ]
 
