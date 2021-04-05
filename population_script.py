@@ -141,10 +141,10 @@ def populate():
             'lng': 9.152500854741813,
             'comments': [
                             {'user': add_UserProfile("Oliver"),
-                            'text': "Impressive that you could get a picture so close to the Bee!",
+                            'text': "A very fast looking racecar",
                             },
                             {'user': add_UserProfile("Annie"),
-                            'text': "That's a really sweet Bee.",
+                            'text': "Interesting choice of lighting - it looks a bit menacing",
                             },
                             ],
             },
