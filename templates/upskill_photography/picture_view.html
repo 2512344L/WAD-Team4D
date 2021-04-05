@@ -62,8 +62,10 @@
 	</div>
 	
 	<div class="col-7" id="center-column">
-		<div id="img-container" class="d-flex align-items-center justify-content-center">
-			<img id="picture_image" src="{{ picture.image.url }}" class="img-thumbnail img-responsive" alt="{{ picture.title }}" style="max-height: 80vh;">
+		<div class="d-flex align-items-center justify-content-center">
+			<div id="img-container">
+				<img id="picture_image" src="{{ picture.image.url }}" class="img-thumbnail img-responsive" alt="{{ picture.title }}" style="max-height: 80vh;">
+			</div>
 		</div>
 		{% if picture.latitude %}
 		<div id="map-container" data-show-location="true"></div>

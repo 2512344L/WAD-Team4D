@@ -119,8 +119,9 @@ class Picture(models.Model):
                 self.longitude = -180
             if self.longitude > 180:
                 self.longitude = 180
-        if self.image and not self.make_thumbnail():
-            raise Exception('Could not create thumbnail - is the file type valid?')
+        if not self.thumbnail:
+            if self.image and not self.make_thumbnail():
+                raise Exception('Could not create thumbnail - is the file type valid?')
         super(Picture, self).save(*args, **kwargs)
     
     ## Private Method - Creates the thumbnail from the uploaded image and adds padding to make it square ##
