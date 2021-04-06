@@ -11,6 +11,7 @@ import uuid
 
 
 ## Private Method - Rename the UserProfile profile picture on creation ##
+# Taken from https://stackoverflow.com/questions/15140942/django-imagefield-change-file-name-on-upload
 def rename_profile_picture(instance, filename):
     upload_to="profile_images"
     ext = filename.split('.')[-1]
@@ -37,6 +38,7 @@ class UserProfile(models.Model):
         super(UserProfile, self).save(*args, **kwargs)
     
     ## Private Method - Scales down and crops the profile picture on upload ##
+    # Taken from https://stackoverflow.com/questions/23922289/django-pil-save-thumbnail-version-right-when-image-is-uploaded
     def make_thumbnail(self):
         image = Image.open(self.profile_picture)
         width, height = image.size
@@ -78,6 +80,7 @@ def uuid4_hex():
     return uuid.uuid4().hex
 
 ## Private Method - Renames The image on upload ##
+# Taken from https://stackoverflow.com/questions/15140942/django-imagefield-change-file-name-on-upload
 def rename_image(instance, filename):
     upload_to = "user_uploads"
     ext = filename.split('.')[-1]
@@ -85,6 +88,7 @@ def rename_image(instance, filename):
     return os.path.join(upload_to, filename)
 
 ## Private Method - Renames The thumbnail on upload ##
+# Taken from https://stackoverflow.com/questions/15140942/django-imagefield-change-file-name-on-upload
 def rename_thumbnail(instance, filename):
     upload_to="user_uploads_thumbnails"
     ext = filename.split('.')[-1]
@@ -125,6 +129,7 @@ class Picture(models.Model):
         super(Picture, self).save(*args, **kwargs)
     
     ## Private Method - Creates the thumbnail from the uploaded image and adds padding to make it square ##
+    # Taken from https://stackoverflow.com/questions/23922289/django-pil-save-thumbnail-version-right-when-image-is-uploaded
     def make_thumbnail(self):
         unpadded_image = Image.open(self.image)
         unpadded_image = unpadded_image.copy()
