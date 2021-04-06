@@ -34,7 +34,7 @@
 				<tr>
 					<th scope="row" class="align-top">Likes</th>
 					<td>
-						{{ picture.likes }}
+						<span id="like_count">{{ picture.likes }}</span>
 						{% if user.is_authenticated %}
 						<button id="like_btn"
 								data-pictureid="{{ picture.picture_id }}"
