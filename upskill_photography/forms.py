@@ -9,7 +9,6 @@ class PictureUploadForm(forms.ModelForm):
 
 
 class ProfilePictureForm(forms.ModelForm):
-    title = forms.CharField()
     class Meta:
         model = UserProfile
         fields = ('profile_picture',)
