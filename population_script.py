@@ -10,7 +10,11 @@ import uuid
 from PIL import Image, ImageChops
 from pathlib import Path
 
-
+"""
+Since it is difficult to find duplicates of Pictures and Comments in the current model,
+it is advised to use the population script only once when the database is empty.
+Otherwise, copies of Pictures and Comments can occur several times.
+"""
 def populate():
     if not os.path.exists('media'):
         os.makedirs('media')
@@ -218,18 +222,23 @@ def add_picture(cat, title, image, uploading_user, views=0, likes=0, lat=None, l
     duplicate_picture = None
     this_im_path = Path("media/" + image).absolute()
     this_im = Image.open(this_im_path)
+    this_width, this_height = this_im.size
+    this_im.thumbnail((512,512), Image.ANTIALIAS)
     parent_path = Path(this_im_path).parent.absolute()
     cwd = os.getcwd()
-    for picture_object in Picture.objects.all():
+    for picture_object in Picture.objects.filter(uploading_user=uploading_user):
         comp_im = Image.open(Path(cwd + picture_object.image.url).absolute())
-        pixels = list(ImageChops.difference(this_im, comp_im).getdata())
-        diff = 0
-        for tup in pixels:
-            diff += sum(tup)
-        if diff == 0:
-            already_exists = True
-            duplicate_picture = picture_object
-        break
+        comp_width, comp_height = comp_im.size
+        if this_width == comp_width and this_height == comp_height:
+            comp_im.thumbnail((512,512), Image.ANTIALIAS)
+            pixels = list(ImageChops.difference(this_im, comp_im).getdata())
+            diff = 0
+            for tup in pixels:
+                diff += sum(tup)
+            if diff == 0:
+                already_exists = True
+                duplicate_picture = picture_object
+            break
     if not already_exists:
         p, created = Picture.objects.get_or_create(uploading_user=uploading_user, title=title, image=image, category=cat)
         p.views = views

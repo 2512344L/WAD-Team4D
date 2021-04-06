@@ -386,6 +386,9 @@ def upload(request):
             lat = request.POST.get('latitude', None)
             if lng == "" or lat == "" or allow_location == None:
                 lng = lat = None
+            else:
+                lng = float(lng)
+                lat = float(lat)
             Picture.objects.create(uploading_user=uploading_user, title=title, image=image, category=category, longitude=lng, latitude=lat)
         return redirect(reverse('upskill_photography:discovery'))
     else:
