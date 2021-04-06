@@ -160,7 +160,7 @@ def populate():
         {'image_file_name' : 'swans.jpg',
             'uploading_user': add_UserProfile("Annie"),
             'category': add_cat("Nature"),
-            'title': 'Yound and Old',
+            'title': 'Young and Old',
             'views': 16,
             'likes': 10,
             'lat': None,

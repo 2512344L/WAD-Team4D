@@ -18,7 +18,7 @@
 		</div>
 		
 		
-		<form class="ml-auto px-4 text-light" action="{% url 'upskill_photography:discovery' %}" method="post">
+		<form class="ml-auto px-4 text-light" action="{% url 'upskill_photography:show_category' category.slug %}" method="post">
 			{% csrf_token %}
 			Sort By: 
 			<select class="form-select bg-dark text-light" aria-label="Sorting Style" name="sort_style">
